@@ -21,11 +21,11 @@ std::istream& operator>> (std::istream& in, Enemy& enemy) {
 }
 
 // <-- encapsulation -->
-int Enemy::Get_id() { return id; }
-std::string Enemy::Get_name() { return name; }
-int Enemy::Get_max_hp() { return max_hp; }
-int Enemy::Get_rank() { return rank; }
-school_enum Enemy::Get_school() { return school; }
-int Enemy::Get_n_enemy_spells() { return n_enemy_spells; }
-std::vector<int> Enemy::Get_enemy_spells() { return enemy_spells; }
-EnemyDrops Enemy::Get_drops() { return drops; }
+int Enemy::GetId() { return id; }
+std::string Enemy::GetName() { return name; }
+int Enemy::GetMax_hp() { return max_hp; }
+int Enemy::GetRank() { return rank; }
+school_enum Enemy::GetSchool() { return school; }
+int Enemy::GetN_enemy_spells() { return n_enemy_spells; }
+std::vector<int> Enemy::GetEnemy_spells() { return enemy_spells; }
+EnemyDrops Enemy::GetDrops() { return drops; }

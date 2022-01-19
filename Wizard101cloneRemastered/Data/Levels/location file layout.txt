@@ -1,0 +1,11 @@
+size_x size_y
+npcs:
+	appearance name position
+<
+gateways:
+	orientation(H - horizontal, V - vertical) destination spawn_position_in_destination position
+<
+layout: 4x3
+	....
+	....
+	....

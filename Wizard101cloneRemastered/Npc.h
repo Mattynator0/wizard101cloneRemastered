@@ -14,8 +14,8 @@ public:
 	Npc(char appearance, std::string name);
 
 	// <-- encapsulation -->
-	std::string Get_name();
-	char Get_appearance();
+	std::string GetName();
+	char GetAppearance();
 
 	// ----- data -----
 private:

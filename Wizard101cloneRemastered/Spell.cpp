@@ -12,10 +12,10 @@ std::istream& operator>> (std::istream& in, Spell& spell) {
 }
 
 // <-- encapsulation -->
-int Spell::Get_id() { return id; }
-std::string Spell::Get_name() { return name; }
-int Spell::Get_cost() { return cost; }
-school_enum Spell::Get_school() { return school; }
-spell_type_enum Spell::Get_type() { return type; }
-int Spell::Get_accuracy() { return accuracy; }
-std::string Spell::Get_descripition() { return descripition; }
+int Spell::GetId() { return id; }
+std::string Spell::GetName() { return name; }
+int Spell::GetCost() { return cost; }
+school_enum Spell::GetSchool() { return school; }
+spell_type_enum Spell::GetType() { return type; }
+int Spell::GetAccuracy() { return accuracy; }
+std::string Spell::GetDescripition() { return descripition; }

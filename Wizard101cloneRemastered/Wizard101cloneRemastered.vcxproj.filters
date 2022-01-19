@@ -88,5 +88,6 @@
     <Text Include="Data\spells.txt" />
     <Text Include="Data\enemies.txt" />
     <Text Include="Data\items.txt" />
+    <Text Include="Data\Levels\location file layout.txt" />
   </ItemGroup>
 </Project>

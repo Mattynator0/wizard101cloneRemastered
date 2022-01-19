@@ -1,12 +1,10 @@
 #pragma once
-#include "Enemy.h"
 #include "Item.h"
 #include "Level.h"
-#include "Npc.h"
-#include "Player.h"
 #include "Spell.h"
 
 #include <array>
+#include <conio.h>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -35,9 +33,6 @@ void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 	}
 }
 
-extern Level current_level;
-extern Player player;
-
 extern std::array<Spell, n_spells> spells;
 extern std::array<Item, n_items> items;
 extern std::array<Enemy, n_enemies> enemies;
@@ -49,7 +44,8 @@ extern std::vector<Enemy> spawned_enemies;
 
 // ----- loading stuff from files -----
 void LoadData();
-
 void LoadLevel(const locations_enum& location);
 
+// ----- game functionality -----
 void Gameloop();
+void MovePlayer(int x, int y);

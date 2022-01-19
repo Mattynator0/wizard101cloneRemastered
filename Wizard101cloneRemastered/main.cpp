@@ -8,8 +8,8 @@ int main()
 
 	LoadLevel(locations_enum::Headmaster_Ambrose_Office);
 
-	player.Set_position({ 2, 2 });
-	player.Set_appearance('@');
+	player.SetPosition({ 2, 2 });
+	player.SetAppearance('@');
 	current_level.SpawnEntity(&player);
 
 	Gameloop();
@@ -17,7 +17,7 @@ int main()
 // ! - not fully implemented
 // ----- ON LAUNCHING GAME -----
 // load all essential data
-	// spells
+	//! spells
 		// id
 		// name
 		// cost in pips and overall mana (cost -1 means it consumes all available pips)
@@ -52,8 +52,8 @@ int main()
 			// first char is spell type: {d,h,n,w,c,g,m,e}
 			// TODO: make use of ascii values to encode data in the string
 			// https://www.asciitable.com
-	// enemies
-	// items
+	//! enemies
+	//! items
 		// clothing
 			/*
 			* hats
@@ -78,16 +78,15 @@ int main()
 	// spawn whatever should be spawned (player, NPCs, etc.)
 
 // ----- ON EVERY PLAYER "ACTION" -----
-//! EXPLORATION:
+// EXPLORATION:
 	// draw 11x11 level grid around player (player is in the center)
-	// draw exploreUI
-	// ask for user input
+	//! draw exploreUI
+	//! ask for user input
 		/* 
 		* a - move left
 		* b - backpack
 		* c - character tab (basic info like name, stats, etc.)
 		* d - move right
-		* j - crafting
 		* p - spell deck
 		* q - quests
 		* s - move down

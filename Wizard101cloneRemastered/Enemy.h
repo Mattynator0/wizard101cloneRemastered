@@ -24,14 +24,14 @@ public:
 	friend std::istream& operator>> (std::istream& in, Enemy& enemy);
 
 	// <-- encapsulation -->
-	int Get_id();
-	std::string Get_name();
-	int Get_max_hp();
-	int Get_rank();
-	school_enum Get_school();
-	int Get_n_enemy_spells();
-	std::vector<int> Get_enemy_spells();
-	EnemyDrops Get_drops();
+	int GetId();
+	std::string GetName();
+	int GetMax_hp();
+	int GetRank();
+	school_enum GetSchool();
+	int GetN_enemy_spells();
+	std::vector<int> GetEnemy_spells();
+	EnemyDrops GetDrops();
 
 	// ----- data -----
 protected:

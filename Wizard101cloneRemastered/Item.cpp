@@ -11,7 +11,7 @@ std::istream& operator>> (std::istream& in, Item& item) {
 }
 
 // <-- encapsulation -->
-int Item::Get_id() { return id; }
-std::string Item::Get_name() { return name; }
-int Item::Get_level_req() { return level_req; }
-std::string Item::Get_stats() { return stats; }
+int Item::GetId() { return id; }
+std::string Item::GetName() { return name; }
+int Item::GetLevel_req() { return level_req; }
+std::string Item::GetStats() { return stats; }

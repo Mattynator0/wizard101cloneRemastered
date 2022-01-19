@@ -14,10 +14,10 @@ public:
 	friend std::istream& operator>> (std::istream& in, Item& item);
 
 	// <-- encapsulation -->
-	int Get_id();
-	std::string Get_name();
-	int Get_level_req();
-	std::string Get_stats();
+	int GetId();
+	std::string GetName();
+	int GetLevel_req();
+	std::string GetStats();
 
 	// ----- data -----
 protected:

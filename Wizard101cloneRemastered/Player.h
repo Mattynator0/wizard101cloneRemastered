@@ -28,3 +28,5 @@ protected:
 	int m_level = 1, m_exp = 0;
 
 };
+
+extern Player player;

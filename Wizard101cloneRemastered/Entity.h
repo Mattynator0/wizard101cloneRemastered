@@ -1,9 +1,12 @@
 #pragma once
 #include "my_globals.h"
 
+#include <iostream>
+
 struct Position {
 	int x, y;
 };
+std::istream& operator>> (std::istream& in, Position& position);
 
 class Entity
 {
@@ -11,10 +14,10 @@ class Entity
 public:
 
 	// <-- encapsulation -->
-	Position Get_position() const;
-	void Set_position(Position position);
-	virtual char Get_appearance() const;
-	void Set_appearance(char appearance);
+	Position GetPosition() const;
+	void SetPosition(Position position);
+	virtual char GetAppearance() const;
+	void SetAppearance(char appearance);
 	
 	// ----- data -----
 protected:

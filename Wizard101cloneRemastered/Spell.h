@@ -13,13 +13,13 @@ public:
 	friend std::istream& operator>> (std::istream& in, Spell& spell);
 
 	// <-- encapsulation -->
-	int Get_id();
-	std::string Get_name();
-	int Get_cost();
-	school_enum Get_school();
-	spell_type_enum Get_type();
-	int Get_accuracy();
-	std::string Get_descripition();
+	int GetId();
+	std::string GetName();
+	int GetCost();
+	school_enum GetSchool();
+	spell_type_enum GetType();
+	int GetAccuracy();
+	std::string GetDescripition();
 
 
 	// ----- data -----
