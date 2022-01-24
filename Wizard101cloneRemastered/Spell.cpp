@@ -3,11 +3,16 @@
 // ----- functions -----
 std::istream& operator>> (std::istream& in, Spell& spell) {
 	int temp;
-	in >> spell.id >> spell.name >> spell.cost >> temp;
+	in >> spell.id;
+	in.ignore(1);
+	getline(in, spell.name, ';');
+	in >> spell.cost >> temp;
 	spell.school = (school_enum)temp;
 	in >> temp;
 	spell.type = (spell_type_enum)temp;
-	in >> spell.accuracy >> spell.descripition;
+	in >> spell.accuracy;
+	in.ignore(1);
+	getline(in, spell.descripition);
 	return in;
 }
 

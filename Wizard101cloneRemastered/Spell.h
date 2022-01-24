@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-const int n_spells = 0;
+const int n_spells = 1;
 
 class Spell
 {

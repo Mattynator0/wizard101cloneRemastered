@@ -4,6 +4,7 @@
 
 int main()
 {
+	//std::cout.sync_with_stdio(false); // to be determined if it's necessary
 	LoadData();
 
 	LoadLevel(locations_enum::Headmaster_Ambrose_Office);

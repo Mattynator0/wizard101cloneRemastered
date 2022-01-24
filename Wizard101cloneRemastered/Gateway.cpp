@@ -1,10 +1,10 @@
 #include "Gateway.h"
 
 std::unordered_map<std::string, locations_enum> map_string_to_location = {
-    { "Headmaster_Ambrose_Office", locations_enum::Headmaster_Ambrose_Office },
-    { "The_Commons", locations_enum::The_Commons },
+    { "Headmaster Ambrose Office", locations_enum::Headmaster_Ambrose_Office },
+    { "The Commons", locations_enum::The_Commons },
     { "Ravenwood", locations_enum::Ravenwood },
-    { "Unicorn_Way", locations_enum::Unicorn_Way }
+    { "Unicorn Way", locations_enum::Unicorn_Way }
 };
 
 // ----- functions -----

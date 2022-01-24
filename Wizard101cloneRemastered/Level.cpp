@@ -7,25 +7,25 @@ std::vector<Gateway> spawned_gateways;
 std::vector<Enemy> spawned_enemies;
 
 std::istream& operator>> (std::istream& in, Level& level) {
-	in >> level.level_size_x >> level.level_size_y;
-	int level_size = level.level_size_x * level.level_size_y;
+	char temp_char;
+	in >> level.level_size.x >> temp_char >> level.level_size.y; // temp_char gets rid of ';' character separating data
+	int level_size = level.level_size.x * level.level_size.y;
+	in.ignore(INT_MAX, '\n'); // get rid of EOL
 
 	// load npc data
 	std::string str;
-	char temp_char;
 	while (true) {
 		std::getline(in, str);
-		if (str == "") continue;
-		if (str[0] == '<') break;
+		if (str == "<") break;
 
-		// example of a string to parse: A Headmaster_Ambrose 5 8
+		// example of a string to parse: A;Headmaster Ambrose;5;8
 		temp_char = str[0];
-		str.erase(0, str.find(' ') + 1); // Headmaster_Ambrose 5 8
-		spawned_npcs.push_back(Npc(temp_char, str.substr(0, str.find(' ')))); // (A, Headmaster_Ambrose)
-		str.erase(0, str.find(' ') + 1); // 5 8
+		str.erase(0, str.find(';') + 1); // Headmaster Ambrose;5;8
+		spawned_npcs.push_back(Npc(temp_char, str.substr(0, str.find(';')))); // (A, Headmaster Ambrose)
+		str.erase(0, str.find(';') + 1); // 5;8
 		spawned_npcs[spawned_npcs.size() - 1].SetPosition({
-			std::stoi(str.substr(0, str.find(' '))), // 5
-			std::stoi(str.substr(str.find(' ') + 1, str.find('\n'))) // 8
+			std::stoi(str.substr(0, str.find(';'))), // 5
+			std::stoi(str.substr(str.find(';') + 1)) // 8
 			});
 	}
 
@@ -35,11 +35,10 @@ std::istream& operator>> (std::istream& in, Level& level) {
 
 	while (true) {
 		std::getline(in, str);
-		if (str[0] == '<')
-			break;
+		if (str == "<") break;
 
 		// load in gateways
-		// example of a string to parse: H The_Commons -1 -1 5 0
+		// example of a string to parse: H;The Commons;-1;-1;5;0
 		switch (str[0]) {
 			case 'H':
 				temp_orientation_enum = orientation_enum::Horizontal;
@@ -48,20 +47,20 @@ std::istream& operator>> (std::istream& in, Level& level) {
 				temp_orientation_enum = orientation_enum::Vertical;
 				break;
 		}
-		str.erase(0, str.find(' ') + 1); // The_Commons -1 -1 5 0
+		str.erase(0, str.find(' ') + 1); // The Commons;-1;-1;5;0
 		for (const auto& n : map_string_to_location) {
-			if (str.substr(0, str.find(' ')) == n.first)
+			if (str.substr(0, str.find(';')) == n.first)
 				temp_locations_enum = n.second; // locations_enum::The_Commons
 		}
-		str.erase(0, str.find(' ') + 1); // -1 -1 5 0
-		temp_position.x = std::stoi(str.substr(0, str.find(' ')));
-		str.erase(0, str.find(' ') + 1); // -1 5 0
-		temp_position.y = std::stoi(str.substr(0, str.find(' ')));
-		str.erase(0, str.find(' ') + 1); // 5 0
+		str.erase(0, str.find(';') + 1); // -1;-1;5;0
+		temp_position.x = std::stoi(str.substr(0, str.find(';')));
+		str.erase(0, str.find(';') + 1); // -1;5;0
+		temp_position.y = std::stoi(str.substr(0, str.find(';')));
+		str.erase(0, str.find(';') + 1); // 5;0
 		spawned_gateways.push_back(Gateway(temp_locations_enum, temp_position, temp_orientation_enum));
 		spawned_gateways[spawned_gateways.size() - 1].SetPosition({
-			std::stoi(str.substr(0, str.find(' '))), // 5
-			std::stoi(str.substr(str.find(' ') + 1, str.find('\n'))) // 0
+			std::stoi(str.substr(0, str.find(';'))), // 5
+			std::stoi(str.substr(str.find(';') + 1)) // 0
 			});
 	}
 
@@ -83,16 +82,16 @@ std::istream& operator>> (std::istream& in, Level& level) {
 	return in;
 }
 void Level::SpawnEntity(Enemy* const entity_ptr) {
-	m_cells[entity_ptr->GetPosition().y * level_size_x + entity_ptr->GetPosition().x] = { cell_type_enum::Enemy, entity_ptr };
+	m_cells[entity_ptr->GetPosition().y * level_size.x + entity_ptr->GetPosition().x] = { cell_type_enum::Enemy, entity_ptr };
 }
 void Level::SpawnEntity(Gateway* const entity_ptr) {
-	m_cells[entity_ptr->GetPosition().y * level_size_x + entity_ptr->GetPosition().x] = { cell_type_enum::Gateway, entity_ptr };
+	m_cells[entity_ptr->GetPosition().y * level_size.x + entity_ptr->GetPosition().x] = { cell_type_enum::Gateway, entity_ptr };
 }
 void Level::SpawnEntity(Npc* const entity_ptr) {
-	m_cells[entity_ptr->GetPosition().y * level_size_x + entity_ptr->GetPosition().x] = { cell_type_enum::Npc, entity_ptr };
+	m_cells[entity_ptr->GetPosition().y * level_size.x + entity_ptr->GetPosition().x] = { cell_type_enum::Npc, entity_ptr };
 }
 void Level::SpawnEntity(Player* const entity_ptr) {
-	m_cells[entity_ptr->GetPosition().y * level_size_x + entity_ptr->GetPosition().x] = { cell_type_enum::Player, entity_ptr };
+	m_cells[entity_ptr->GetPosition().y * level_size.x + entity_ptr->GetPosition().x] = { cell_type_enum::Player, entity_ptr };
 }
 
 void Level::ClearLevel() {
@@ -102,8 +101,8 @@ void Level::ClearLevel() {
 	player.SetPosition({ -1, -1 });
 
 	m_cells.clear();
-	level_size_x = 0;
-	level_size_y = 0;
+	level_size.x = 0;
+	level_size.y = 0;
 }
 void Level::DrawLevel() {
 	for (int i = 0; i < 121; i++) {
@@ -111,16 +110,16 @@ void Level::DrawLevel() {
 			std::cout << '\n';
 
 		Position gui_pos = { player.GetPosition().x - 5 + i%11, player.GetPosition().y - 5 + i/11 };
-		if (gui_pos.y < 0 || gui_pos.y >= current_level.level_size_y) {
+		if (gui_pos.y < 0 || gui_pos.y >= current_level.level_size.y) {
 			std::cout << "           "; // 11x ' '
 			i += 10;
 			continue;
 		}
-		if (gui_pos.x < 0 || gui_pos.x >= current_level.level_size_x) {
+		if (gui_pos.x < 0 || gui_pos.x >= current_level.level_size.x) {
 			std::cout << ' ';
 			continue;
 		}
-		int j = gui_pos.y * level_size_x + gui_pos.x;
+		int j = gui_pos.y * level_size.x + gui_pos.x;
 
 		Enemy* enemy_ptr;
 		Gateway* gateway_ptr;
@@ -156,9 +155,9 @@ void Level::DrawLevel() {
 	}
 }
 
-LevelLayoutCell Level::GetCell(const Position position) { return m_cells[position.y * level_size_x + position.x]; }
+LevelLayoutCell Level::GetCell(const Position position) { return m_cells[position.y * level_size.x + position.x]; }
 void Level::ClearCell(const Position position) {
-	auto cell = m_cells[position.y * level_size_x + position.x];
+	auto cell = m_cells[position.y * level_size.x + position.x];
 	switch (cell.cell_type) {
 		case cell_type_enum::Npc:
 			spawned_npcs.erase(spawned_npcs.begin() + std::uintptr_t(cell.entity_ptr - (Entity*)&spawned_npcs.front()) / sizeof(Npc));
@@ -170,7 +169,7 @@ void Level::ClearCell(const Position position) {
 			spawned_enemies.erase(spawned_enemies.begin() + std::uintptr_t(cell.entity_ptr - (Entity*)&spawned_enemies.front()) / sizeof(Enemy));
 			break;
 	}
-	m_cells[position.y * level_size_x + position.x] = { cell_type_enum::Empty, nullptr };
+	m_cells[position.y * level_size.x + position.x] = { cell_type_enum::Empty, nullptr };
 }
 void Level::AppendLayoutCell(const LevelLayoutCell cell) {
 	m_cells.push_back(cell);

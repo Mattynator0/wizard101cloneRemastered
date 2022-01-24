@@ -49,50 +49,43 @@ void Gameloop() {
 		system("CLS");
 		current_level.DrawLevel();
 		char choice;
-		while (true) {
-			choice = _getch();
-			switch (choice) {
-				case 'w':
-					// move up
-					MovePlayer(0, -1);
-					goto exit_second_while;
-					break;
-				case 's':
-					// move down
-					MovePlayer(0, 1);
-					goto exit_second_while;
-					break;
-				case 'a':
-					// move left
-					MovePlayer(-1, 0);
-					goto exit_second_while;
-					break;
-				case 'd':
-					// move right
-					MovePlayer(1, 0);
-					goto exit_second_while;
-					break;
-				case 'x':
-					// interact
-					break;
-				case 'c':
-					// open charachter tab
-					break;
-				case 'b':
-					// open backpack
-					break;
-				case 'p':
-					// open spell deck
-					break;
-				case 'q':
-					// open quests tab
-					break;
-				default:
-					continue;
+		choice = _getch();
+		switch (choice) {
+			case 'w':
+				// move up
+				MovePlayer(0, -1);
+				break;
+			case 's':
+				// move down
+				MovePlayer(0, 1);
+				break;
+			case 'a':
+				// move left
+				MovePlayer(-1, 0);
+				break;
+			case 'd':
+				// move right
+				MovePlayer(1, 0);
+				break;
+			case 'x':
+				// interact
+				break;
+			case 'c':
+				// open charachter tab
+				break;
+			case 'b':
+				// open backpack
+				break;
+			case 'p':
+				// open spell deck
+				break;
+			case 'q':
+				// open quests tab
+				break;
+			default:
+				continue;
 
-			}
 		}
-		exit_second_while:;
 	}
 }
 void MovePlayer(int x, int y) {

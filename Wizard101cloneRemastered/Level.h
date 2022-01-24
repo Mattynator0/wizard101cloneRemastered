@@ -43,7 +43,7 @@ public:
 	static constexpr char barrier_char = '#';
 
 protected:
-	int level_size_x, level_size_y;
+	Position level_size;
 	std::vector<LevelLayoutCell> m_cells;
 };
 
