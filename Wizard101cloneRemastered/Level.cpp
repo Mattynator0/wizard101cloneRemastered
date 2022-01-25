@@ -21,7 +21,7 @@ std::istream& operator>> (std::istream& in, Level& level) {
 		// example of a string to parse: A;Headmaster Ambrose;5;8
 		temp_char = str[0];
 		str.erase(0, str.find(';') + 1); // Headmaster Ambrose;5;8
-		spawned_npcs.push_back(Npc(temp_char, str.substr(0, str.find(';')))); // (A, Headmaster Ambrose)
+		spawned_npcs.push_back(Npc(temp_char, str.substr(0, str.find(';')))); // Npc('A', "Headmaster Ambrose")
 		str.erase(0, str.find(';') + 1); // 5;8
 		spawned_npcs[spawned_npcs.size() - 1].SetPosition({
 			std::stoi(str.substr(0, str.find(';'))), // 5
@@ -38,7 +38,7 @@ std::istream& operator>> (std::istream& in, Level& level) {
 		if (str == "<") break;
 
 		// load in gateways
-		// example of a string to parse: H;The Commons;-1;-1;5;0
+		// example of a string to parse: H;The Commons;3;5;5;0
 		switch (str[0]) {
 			case 'H':
 				temp_orientation_enum = orientation_enum::Horizontal;
@@ -47,14 +47,14 @@ std::istream& operator>> (std::istream& in, Level& level) {
 				temp_orientation_enum = orientation_enum::Vertical;
 				break;
 		}
-		str.erase(0, str.find(' ') + 1); // The Commons;-1;-1;5;0
+		str.erase(0, str.find(';') + 1); // The Commons;-1;-1;5;0
 		for (const auto& n : map_string_to_location) {
 			if (str.substr(0, str.find(';')) == n.first)
 				temp_locations_enum = n.second; // locations_enum::The_Commons
 		}
-		str.erase(0, str.find(';') + 1); // -1;-1;5;0
+		str.erase(0, str.find(';') + 1); // 3;5;5;0
 		temp_position.x = std::stoi(str.substr(0, str.find(';')));
-		str.erase(0, str.find(';') + 1); // -1;5;0
+		str.erase(0, str.find(';') + 1); // 5;5;0
 		temp_position.y = std::stoi(str.substr(0, str.find(';')));
 		str.erase(0, str.find(';') + 1); // 5;0
 		spawned_gateways.push_back(Gateway(temp_locations_enum, temp_position, temp_orientation_enum));
@@ -101,8 +101,7 @@ void Level::ClearLevel() {
 	player.SetPosition({ -1, -1 });
 
 	m_cells.clear();
-	level_size.x = 0;
-	level_size.y = 0;
+	level_size = { 0, 0 };
 }
 void Level::DrawLevel() {
 	for (int i = 0; i < 121; i++) {

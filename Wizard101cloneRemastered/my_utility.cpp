@@ -90,6 +90,7 @@ void Gameloop() {
 }
 void MovePlayer(int x, int y) {
 	Position saved_pos = player.GetPosition();
+	Gateway* gateway_ptr;
 	switch (current_level.GetCell({ saved_pos.x + x, saved_pos.y + y }).cell_type) {
 		case cell_type_enum::Empty:
 			player.SetPosition({ saved_pos.x + x, saved_pos.y + y });
@@ -103,6 +104,12 @@ void MovePlayer(int x, int y) {
 			break;
 		case cell_type_enum::Gateway:
 			// teleport to gateway's destination
+			gateway_ptr = dynamic_cast<Gateway*>(current_level.GetCell({ saved_pos.x + x, saved_pos.y + y }).entity_ptr);
+			current_level.ClearLevel();
+			player.SetPosition(gateway_ptr->GetDestinationSpawnPos());
+			LoadLevel(gateway_ptr->GetDestination());
+			current_level.SpawnEntity(&player);
+
 			break;
 		case cell_type_enum::Npc:
 			// talk to npc

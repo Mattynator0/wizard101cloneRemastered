@@ -1,11 +1,11 @@
-size_x size_y
+size_x;size_y
 npcs:
-	appearance name position
+	appearance;name;position
 <
 gateways:
-	orientation(H - horizontal, V - vertical) destination spawn_position_in_destination position
+	orientation(H - horizontal, V - vertical);destination;spawn_position_in_destination;position
 <
-layout: 4x3
+layout: e.g. 4x3
 	....
 	....
 	....
