@@ -5,7 +5,10 @@
 
 #include <array>
 #include <conio.h>
+#include <codecvt>
+#include <fcntl.h>
 #include <fstream>
+#include <io.h>
 #include <iostream>
 #include <map>
 #include <string>
@@ -49,3 +52,4 @@ void LoadLevel(const locations_enum& location);
 // ----- game functionality -----
 void Gameloop();
 void MovePlayer(int x, int y);
+void DrawSpellDeckUI();

@@ -1,18 +1,19 @@
 #include "Player.h"
 
-Player player("Mattynator");
+Player player(L"Mattynator");
 
-Player::Player(const std::string& name) : m_name(name) {}
+Player::Player(const std::wstring& name) : m_name(name) {}
 
-std::string& Player::GetName() { return m_name; }
+std::wstring& Player::GetName() { return m_name; }
 int Player::GetLevel() { return m_level; }
 int Player::GetExp() { return m_exp; }
+std::vector<int> Player::GetUnlockedSpells() { return m_unlocked_spells; }
+std::vector<int> Player::GetSpellsInDeck() { return m_spells_in_deck; }
 
 struct LevelCap {
 	int level, cap;
 	bool training_point;
 };
-
 std::array<LevelCap, 49> levelcaps{ {
 	{ 1,  45,    0 },
 	{ 2,  115,   0 },

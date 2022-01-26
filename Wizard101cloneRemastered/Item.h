@@ -2,7 +2,6 @@
 #include "my_globals.h"
 
 #include <iostream>
-#include <string>
 
 const int n_items = 0;
 
@@ -15,17 +14,17 @@ public:
 
 	// <-- encapsulation -->
 	int GetId();
-	std::string GetName();
+	std::wstring GetName();
 	int GetLevel_req();
-	std::string GetStats();
+	std::wstring GetStats();
 
 	// ----- data -----
 protected:
-	int id;
-	std::string name;
-	int level_req;
-	school_enum school_req;
-	std::string stats;
+	int m_id;
+	std::wstring m_name;
+	int m_level_req;
+	school_enum m_school_req;
+	std::wstring m_stats;
 	
 };
 

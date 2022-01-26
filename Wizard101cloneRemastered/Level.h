@@ -38,12 +38,12 @@ public:
 
 	// ----- data -----
 public:
-	static constexpr char no_cell_char = ' '; // empty cell inaccessible by player
-	static constexpr char empty_cell_char = '.'; // empty cell accessible by player
-	static constexpr char barrier_char = '#';
 
 protected:
-	Position level_size;
+	static constexpr wchar_t m_no_cell_char = ' '; // empty cell inaccessible by player
+	static constexpr wchar_t m_empty_cell_char = '.'; // empty cell accessible by player
+	static constexpr wchar_t m_barrier_char = '#';
+	Position m_level_size;
 	std::vector<LevelLayoutCell> m_cells;
 };
 

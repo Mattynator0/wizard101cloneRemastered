@@ -2,7 +2,6 @@
 #include "my_globals.h"
 
 #include <iostream>
-#include <string>
 
 const int n_spells = 1;
 
@@ -14,23 +13,23 @@ public:
 
 	// <-- encapsulation -->
 	int GetId();
-	std::string GetName();
+	std::wstring GetName();
 	int GetCost();
 	school_enum GetSchool();
 	spell_type_enum GetType();
 	int GetAccuracy();
-	std::string GetDescripition();
+	std::wstring GetDescripition();
 
 
 	// ----- data -----
 protected:
-	int id;
-	std::string name;
-	int cost;
-	school_enum school;
-	spell_type_enum type;
-	int accuracy;
-	std::string descripition;
+	int m_id;
+	std::wstring m_name;
+	int m_cost;
+	school_enum m_school;
+	spell_type_enum m_type;
+	int m_accuracy;
+	std::wstring m_descripition;
 	
 };
 

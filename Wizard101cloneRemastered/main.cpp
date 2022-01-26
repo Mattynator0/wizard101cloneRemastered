@@ -4,13 +4,14 @@
 
 int main()
 {
-	//std::cout.sync_with_stdio(false); // to be determined if it's necessary
-	LoadData();
+	//std::wcout.sync_with_stdio(false); // to be determined if it's necessary
+	_setmode(_fileno(stdout), _O_U16TEXT);
 
+	LoadData();
 	LoadLevel(locations_enum::Headmaster_Ambrose_Office);
 
 	player.SetPosition({ 2, 2 });
-	player.SetAppearance('@');
+	player.SetAppearance(*L"\u0040");
 	current_level.SpawnEntity(&player);
 
 	Gameloop();

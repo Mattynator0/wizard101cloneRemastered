@@ -16,12 +16,12 @@ public:
 	// <-- encapsulation -->
 	Position GetPosition() const;
 	void SetPosition(Position position);
-	virtual char GetAppearance() const;
-	void SetAppearance(char appearance);
+	virtual wchar_t GetAppearance() const;
+	void SetAppearance(wchar_t appearance);
 	
 	// ----- data -----
 protected:
 	Position m_pos;
-	char m_appearance;
+	wchar_t m_appearance;
 };
 

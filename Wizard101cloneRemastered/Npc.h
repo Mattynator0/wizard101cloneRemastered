@@ -2,7 +2,6 @@
 #include "Entity.h"
 
 #include <iostream>
-#include <string>
 
 const int n_npcs = 0;
 
@@ -11,15 +10,15 @@ class Npc :
 {
 	// ----- functions -----
 public:
-	Npc(char appearance, std::string name);
+	Npc(wchar_t appearance, std::wstring name);
 
 	// <-- encapsulation -->
-	std::string GetName();
-	char GetAppearance();
+	std::wstring GetName();
+	wchar_t GetAppearance();
 
 	// ----- data -----
 private:
-	char m_appearance;
-	std::string m_name;
+	wchar_t m_appearance;
+	std::wstring m_name;
 
 };

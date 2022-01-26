@@ -1,8 +1,8 @@
 #include "NPC.h"
 
 // ----- functions -----
-Npc::Npc(char appearance, std::string name) : m_appearance(appearance), m_name(name) {}
+Npc::Npc(wchar_t appearance, std::wstring name) : m_appearance(appearance), m_name(name) {}
 
 // <-- encapsulation -->
-std::string Npc::GetName() { return m_name; }
-char Npc::GetAppearance() { return m_appearance; }
+std::wstring Npc::GetName() { return m_name; }
+wchar_t Npc::GetAppearance() { return m_appearance; }

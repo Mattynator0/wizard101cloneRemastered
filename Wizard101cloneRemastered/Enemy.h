@@ -2,7 +2,6 @@
 #include "Entity.h"
 
 #include <iostream>
-#include <string>
 #include <vector>
 
 const int n_enemies = 0;
@@ -25,7 +24,7 @@ public:
 
 	// <-- encapsulation -->
 	int GetId();
-	std::string GetName();
+	std::wstring GetName();
 	int GetMax_hp();
 	int GetRank();
 	school_enum GetSchool();
@@ -35,14 +34,14 @@ public:
 
 	// ----- data -----
 protected:
-	int id;
-	std::string name;
-	int max_hp;
-	int rank;
-	school_enum school;
-	int n_enemy_spells;
-	std::vector<int> enemy_spells;
-	EnemyDrops drops;
+	int m_id;
+	std::wstring m_name;
+	int m_max_hp;
+	int m_rank;
+	school_enum m_school;
+	int m_n_enemy_spells;
+	std::vector<int> m_enemy_spells;
+	EnemyDrops m_drops;
 
 };
 

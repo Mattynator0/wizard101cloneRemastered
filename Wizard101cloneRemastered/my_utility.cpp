@@ -30,14 +30,16 @@ void LoadLevel(const locations_enum& location) {
 	std::ifstream ifile;
 
 	// convert enum to string
-	std::string str;
-	for (const auto& n : map_string_to_location) {
+	std::wstring wstr;
+	for (const auto& n : map_wstring_to_location) {
 		if (location == n.second) {
-			str = n.first;
+			wstr = n.first;
 			break;
 		}
 	}
-	
+	// convert wstring to string
+	std::string str = narrow(wstr);
+
 	ifile.open("Data/Levels/" + str + ".txt");
 	ifile >> current_level;
 	ifile.close();
@@ -48,7 +50,7 @@ void Gameloop() {
 	while (true) {
 		system("CLS");
 		current_level.DrawLevel();
-		char choice;
+		wchar_t choice;
 		choice = _getch();
 		switch (choice) {
 			case 'w':
@@ -78,6 +80,7 @@ void Gameloop() {
 				break;
 			case 'p':
 				// open spell deck
+				DrawSpellDeckUI();
 				break;
 			case 'q':
 				// open quests tab
@@ -109,10 +112,25 @@ void MovePlayer(int x, int y) {
 			player.SetPosition(gateway_ptr->GetDestinationSpawnPos());
 			LoadLevel(gateway_ptr->GetDestination());
 			current_level.SpawnEntity(&player);
-
 			break;
 		case cell_type_enum::Npc:
 			// talk to npc
 			break;
+	}
+}
+void DrawSpellDeckUI() {
+	int deck_page = 1;
+	while (true) {
+		system("CLS");
+		std::wcout << "Your deck: \n";
+		std::vector<int> deck = player.GetSpellsInDeck();
+		Spell temp_spell;
+		for (int i = 0; i < 5; i++) {
+			if (i >= deck.size())
+				break;
+			temp_spell = spells[deck[i]];
+			std::wcout << temp_spell.GetName() << " | cost: " << temp_spell.GetCost() << /*" | school: " << temp_spell.GetSchool() <<*/ " | accuracy: " 
+					<< temp_spell.GetAccuracy() << " | " << temp_spell.GetDescripition() << "\n";
+		}
 	}
 }
