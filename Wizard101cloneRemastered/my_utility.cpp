@@ -1,8 +1,19 @@
 #include "my_utility.h"
 
-std::array<Spell, n_spells> spells;
-std::array<Item, n_items> items;
+SpellArray spells;
+ItemArray items;
 std::array<Enemy, n_enemies> enemies;
+
+void ShowConsoleCursor(bool showFlag)
+{
+	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_CURSOR_INFO     cursorInfo;
+
+	GetConsoleCursorInfo(out, &cursorInfo);
+	cursorInfo.bVisible = showFlag; // set the cursor visibility
+	SetConsoleCursorInfo(out, &cursorInfo);
+}
 
 // ----- loading stuff from files -----
 void LoadData() {
@@ -10,13 +21,13 @@ void LoadData() {
 
 	ifile.open("Data/spells.txt");
 	for (int i = 0; i < n_spells; i++) {
-		ifile >> spells[i];
+		ifile >> spells.arr[i];
 	}
 	ifile.close();
 
 	ifile.open("Data/items.txt");
 	for (int i = 0; i < n_items; i++) {
-		ifile >> items[i];
+		ifile >> items.arr[i];
 	}
 	ifile.close();
 
@@ -120,17 +131,23 @@ void MovePlayer(int x, int y) {
 }
 void DrawSpellDeckUI() {
 	int deck_page = 1;
+	char choice;
 	while (true) {
+		// Your deck:
+		// <equipped spells' stats + amount equipped / max (max determined by equipped deck item)>
+		// Your spells:
+		// 
 		system("CLS");
 		std::wcout << "Your deck: \n";
-		std::vector<int> deck = player.GetSpellsInDeck();
+		std::vector<int> deck = player.GetUnlockedSpells();
 		Spell temp_spell;
 		for (int i = 0; i < 5; i++) {
 			if (i >= deck.size())
 				break;
 			temp_spell = spells[deck[i]];
-			std::wcout << temp_spell.GetName() << " | cost: " << temp_spell.GetCost() << /*" | school: " << temp_spell.GetSchool() <<*/ " | accuracy: " 
-					<< temp_spell.GetAccuracy() << " | " << temp_spell.GetDescripition() << "\n";
+			std::wcout << temp_spell.GetName() << " | cost: " << temp_spell.GetCost() << /*" | school: " << temp_spell.GetSchool() <<*/ " | accuracy: " // TODO: display school as text (prob using an unordered_map
+					<< temp_spell.GetAccuracy() << "% | " << temp_spell.GetDescripition() << "\n";
 		}
+		choice = _getch();
 	}
 }

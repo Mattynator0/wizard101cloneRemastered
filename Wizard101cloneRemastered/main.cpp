@@ -6,6 +6,7 @@ int main()
 {
 	//std::wcout.sync_with_stdio(false); // to be determined if it's necessary
 	_setmode(_fileno(stdout), _O_U16TEXT);
+	ShowConsoleCursor(false);
 
 	LoadData();
 	LoadLevel(locations_enum::Headmaster_Ambrose_Office);

@@ -36,14 +36,16 @@ void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 	}
 }
 
-extern std::array<Spell, n_spells> spells;
-extern std::array<Item, n_items> items;
+extern SpellArray spells;
+extern ItemArray items;
 extern std::array<Enemy, n_enemies> enemies;
 
 // ----- entities in current level -----
 extern std::vector<Npc> spawned_npcs;
 extern std::vector<Gateway> spawned_gateways;
 extern std::vector<Enemy> spawned_enemies;
+
+void ShowConsoleCursor(bool showFlag);
 
 // ----- loading stuff from files -----
 void LoadData();

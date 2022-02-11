@@ -1,9 +1,11 @@
 #pragma once
 #include "my_globals.h"
 
+#include <algorithm>
+#include <array>
 #include <iostream>
 
-const int n_spells = 1;
+const int n_spells = 22;
 
 class Spell
 {
@@ -12,13 +14,13 @@ public:
 	friend std::istream& operator>> (std::istream& in, Spell& spell);
 
 	// <-- encapsulation -->
-	int GetId();
-	std::wstring GetName();
-	int GetCost();
-	school_enum GetSchool();
-	spell_type_enum GetType();
-	int GetAccuracy();
-	std::wstring GetDescripition();
+	int GetId() const;
+	std::wstring GetName() const;
+	int GetCost() const;
+	school_enum GetSchool() const;
+	spell_type_enum GetType() const;
+	int GetAccuracy() const;
+	std::wstring GetDescripition() const;
 
 
 	// ----- data -----
@@ -34,3 +36,8 @@ protected:
 };
 
 std::istream& operator>> (std::istream& in, Spell& spell);
+
+struct SpellArray {
+	std::array<Spell, n_spells> arr;
+	Spell& operator[] (const int id);
+};

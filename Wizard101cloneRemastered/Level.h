@@ -32,7 +32,7 @@ public:
 	void DrawLevel();
 
 	// <-- encapsulation -->
-	LevelLayoutCell GetCell(const Position position);
+	LevelLayoutCell GetCell(const Position position) const;
 	void ClearCell(const Position position);
 	void AppendLayoutCell(const LevelLayoutCell cell);
 

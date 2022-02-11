@@ -160,7 +160,7 @@ void Level::DrawLevel() {
 	}
 }
 
-LevelLayoutCell Level::GetCell(const Position position) { return m_cells[position.y * m_level_size.x + position.x]; }
+LevelLayoutCell Level::GetCell(const Position position) const { return m_cells[position.y * m_level_size.x + position.x]; }
 void Level::ClearCell(const Position position) {
 	auto cell = m_cells[position.y * m_level_size.x + position.x];
 	switch (cell.cell_type) {

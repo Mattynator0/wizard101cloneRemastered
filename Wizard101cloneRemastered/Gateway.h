@@ -21,7 +21,7 @@ public:
 
     // ----- data -----
 protected:
-    static constexpr wchar_t m_gateway_horizontal_char = '-';
+    static constexpr wchar_t m_gateway_horizontal_char = *L"\u2500";
     static constexpr wchar_t m_gateway_vertical_char = '|';
     locations_enum m_destination;
     Position m_destination_spawn_pos;

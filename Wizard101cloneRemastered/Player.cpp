@@ -1,15 +1,14 @@
 #include "Player.h"
 
-Player player(L"Mattynator");
+Player player(L"Mattynator", school_enum::Fire);
 
-Player::Player(const std::wstring& name) : m_name(name) {}
+Player::Player(const std::wstring& name, const school_enum school) : m_name(name), m_school(school) {}
 
 std::wstring& Player::GetName() { return m_name; }
-int Player::GetLevel() { return m_level; }
-int Player::GetExp() { return m_exp; }
-std::vector<int> Player::GetUnlockedSpells() { return m_unlocked_spells; }
-std::vector<int> Player::GetSpellsInDeck() { return m_spells_in_deck; }
+school_enum Player::GetSchool() const { return m_school; }
+int Player::GetLevel() const { return m_level; }
 
+int Player::GetExp() const { return m_exp; }
 struct LevelCap {
 	int level, cap;
 	bool training_point;
@@ -65,10 +64,127 @@ std::array<LevelCap, 49> levelcaps{ {
 	{ 48, 39975, 0 },
 	{ 49, 41880, 0 }
 } };
-void Player::AddExp(int n) {
+void Player::AddExp(const int n) {
 	m_exp += n;
 	while (levelcaps[m_level - 1].cap >= m_exp) {
 		m_exp -= levelcaps[m_level - 1].cap;
 		m_level += 1;
 	}
 }
+
+std::vector<int> Player::GetUnlockedSpells() const { return m_unlocked_spells; }
+void Player::UnlockSpell(int id) {
+	m_unlocked_spells.push_back(id);
+	std::sort(m_unlocked_spells.begin(), m_unlocked_spells.end());
+}
+std::vector<int> Player::GetItemsInBackpack() const { return m_items_in_backpack; }
+void Player::AddItem(int id) {
+	if (m_items_in_backpack.size() < 100)
+		m_items_in_backpack.push_back(id);
+	// else display that backpack is full
+}
+std::array<Item*, 8> Player::GetEquippedItems() const { return m_equipped_items; }
+void Player::EquipItem(Item* item_ptr) {
+	if (item_ptr->GetLevelReq() >= m_level && item_ptr->GetSchoolReq() == m_school)
+		m_equipped_items[int(item_ptr->GetType())] = item_ptr;
+}
+void Player::ResetStats() {
+	m_hp = 0;
+	m_maxhp = 0;
+	m_mana = 0;
+	m_maxmana = 0;
+	m_powerpip_chance = 0;
+	m_training_points = 0;
+	m_gold = 0;
+	std::fill(m_damage_raw.begin(), m_damage_raw.end(), 0);
+	std::fill(m_damage_percentage.begin(), m_damage_percentage.end(), 0);
+	std::fill(m_resistance_raw.begin(), m_resistance_raw.end(), 0);
+	std::fill(m_resistance_percentage.begin(), m_resistance_percentage.end(), 0);
+	std::fill(m_accuracy_raw.begin(), m_accuracy_raw.end(), 0);
+	std::fill(m_accuracy_percentage.begin(), m_accuracy_percentage.end(), 0);
+	m_healing_in = 0;
+	m_healing_out = 0;
+}
+void Player::UpdateStats() {
+	ResetStats();
+	// level
+	// equations are based on data from https://wizard101.fandom.com/wiki/Level_Chart
+	m_maxmana = 15 + (m_level - 1) * 120 / 49;
+	if (m_level >= 10)
+		m_powerpip_chance = 10 + (m_level - 1) * 30 / 40;
+	else m_powerpip_chance = 0;
+
+	switch (m_school) {
+		case school_enum::Fire:
+			m_maxhp = 415 + (m_level - 1) * 1085 / 49;
+			break;
+		case school_enum::Ice:
+			m_maxhp = 500 + (m_level - 1) * 1525 / 49;
+			break;
+		case school_enum::Storm:
+			m_maxhp = 400 + (m_level - 1) * 800 / 49;
+			break;
+		case school_enum::Myth:
+			m_maxhp = 425 + (m_level - 1) * 1075 / 49;
+			break;
+		case school_enum::Life:
+			m_maxhp = 460 + (m_level - 1) * 1340 / 49;
+			break;
+		case school_enum::Death:
+			m_maxhp = 450 + (m_level - 1) * 1200 / 49;
+			break;
+		case school_enum::Balance:
+			m_maxhp = 480 + (m_level - 1) * 1320 / 49;
+			break;
+	}
+	// items
+	for (const auto& item : m_equipped_items) {
+		std::wstring stats = item->GetStats();
+		while (stats.substr(0) != L"") {
+			// parse stats string
+			std::wstring current_stat = stats.substr(0, stats.find(';'));
+			stats.erase(0, stats.find(';') + 1);
+
+			std::wstring current_stat_type = current_stat.substr(0, stats.find(':'));
+			current_stat.erase(0, current_stat.find(':') + 1);
+
+			if (current_stat_type == L"health") {
+				m_maxhp += std::stoi(current_stat);
+			} else
+			if (current_stat_type == L"mana") {
+				m_maxmana += std::stoi(current_stat);
+			} else
+			if (current_stat_type == L"damage") {
+				std::wstring current_stat_type = current_stat.substr(0, stats.find(':'));
+				// TODO convert wstring to school_enum and then int to increment the correct variable
+			} else
+			if (current_stat_type == L"resistance") {
+				std::wstring current_stat_type = current_stat.substr(0, stats.find(':'));
+				// TODO convert wstring to school_enum and then int to increment the correct variable
+			} else
+			if (current_stat_type == L"accuracy") {
+				std::wstring current_stat_type = current_stat.substr(0, stats.find(':'));
+				// TODO convert wstring to school_enum and then int to increment the correct variable
+			} else
+			if (current_stat_type == L"spell") {
+				// TODO add a separate part of a deck for spells acquired through equipment
+			}
+		}
+	}
+}
+
+int Player::GetHp() const { return m_hp; }
+int Player::GetMaxhp() const { return m_maxhp; }
+int Player::GetMana() const { return m_mana; }
+int Player::GetMaxmana() const { return m_maxmana; }
+int Player::GetPowerpipChance() const { return m_powerpip_chance; }
+int Player::GetTrainingPoints() const { return m_training_points; }
+int Player::GetGold() const { return m_gold; }
+std::array<int, 7> Player::GetDamageRaw() const { return m_damage_raw; }
+std::array<int, 7> Player::GetDamagePercentage() const { return m_damage_percentage; }
+std::array<int, 7> Player::GetResistanceRaw() const { return m_resistance_raw; }
+std::array<int, 7> Player::ResistancePercentage() const { return m_resistance_percentage; }
+std::array<int, 7> Player::GetAccuracyRaw() const { return m_accuracy_raw; }
+std::array<int, 7> Player::GetAccuracyPercentage() const { return m_accuracy_percentage; }
+int Player::GetHealingIn() const { return m_healing_in; }
+int Player::GetHealingOut() const { return m_healing_out; }
