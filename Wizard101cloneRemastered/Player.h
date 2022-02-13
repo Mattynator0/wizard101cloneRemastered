@@ -26,7 +26,7 @@ public:
 	void AddItem(int id);
 	std::array<Item*, 8> GetEquippedItems() const;
 	void EquipItem(Item* item_ptr);
-	void ResetStats();
+	void ClearStats();
 	void UpdateStats();
 
 	int GetHp() const;
@@ -54,7 +54,7 @@ protected:
 	school_enum m_school;
 	int m_level = 1, m_exp = 0;
 
-	std::vector<int> m_unlocked_spells = { 1 };
+	std::vector<int> m_unlocked_spells;
 	std::vector<int> m_items_in_backpack; // max 100
 	std::array<Item*, 8> m_equipped_items;
 

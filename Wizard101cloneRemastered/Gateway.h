@@ -4,9 +4,7 @@
 
 #include <unordered_map>
 
-extern std::unordered_map<std::wstring, locations_enum> map_wstring_to_location;
-
-// when player steps on a gateway, the level changes to 'm_destination'
+// when player steps on a gateway, level changes to 'm_destination'
 class Gateway :
     public Entity
 {

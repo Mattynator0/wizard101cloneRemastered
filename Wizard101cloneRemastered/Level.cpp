@@ -53,8 +53,10 @@ std::istream& operator>> (std::istream& in, Level& level) {
 		}
 		wstr.erase(0, wstr.find(';') + 1); // The Commons;-1;-1;5;0
 		for (const auto& n : map_wstring_to_location) {
-			if (wstr.substr(0, wstr.find(';')) == n.first)
+			if (wstr.substr(0, wstr.find(';')) == n.first) {
 				temp_locations_enum = n.second; // locations_enum::The_Commons
+				break;
+			}
 		}
 		wstr.erase(0, wstr.find(';') + 1); // 3;5;5;0
 		temp_position.x = std::stoi(wstr.substr(0, wstr.find(';')));

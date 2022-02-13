@@ -2,7 +2,9 @@
 
 Player player(L"Mattynator", school_enum::Fire);
 
-Player::Player(const std::wstring& name, const school_enum school) : m_name(name), m_school(school) {}
+Player::Player(const std::wstring& name, const school_enum school) : m_name(name), m_school(school) {
+	UpdateStats();
+}
 
 std::wstring& Player::GetName() { return m_name; }
 school_enum Player::GetSchool() const { return m_school; }
@@ -85,10 +87,11 @@ void Player::AddItem(int id) {
 }
 std::array<Item*, 8> Player::GetEquippedItems() const { return m_equipped_items; }
 void Player::EquipItem(Item* item_ptr) {
-	if (item_ptr->GetLevelReq() >= m_level && item_ptr->GetSchoolReq() == m_school)
+	if (item_ptr->GetLevelReq() <= m_level && (item_ptr->GetSchoolReq() == m_school || item_ptr->GetSchoolReq() == school_enum::None))
 		m_equipped_items[int(item_ptr->GetType())] = item_ptr;
+	UpdateStats();
 }
-void Player::ResetStats() {
+void Player::ClearStats() {
 	m_hp = 0;
 	m_maxhp = 0;
 	m_mana = 0;
@@ -106,7 +109,7 @@ void Player::ResetStats() {
 	m_healing_out = 0;
 }
 void Player::UpdateStats() {
-	ResetStats();
+	ClearStats();
 	// level
 	// equations are based on data from https://wizard101.fandom.com/wiki/Level_Chart
 	m_maxmana = 15 + (m_level - 1) * 120 / 49;
@@ -139,13 +142,15 @@ void Player::UpdateStats() {
 	}
 	// items
 	for (const auto& item : m_equipped_items) {
+		if (!item)
+			continue;
 		std::wstring stats = item->GetStats();
-		while (stats.substr(0) != L"") {
-			// parse stats string
+		while (stats != L"") {
+			// sting structure:  stat1;stat2;...;
 			std::wstring current_stat = stats.substr(0, stats.find(';'));
 			stats.erase(0, stats.find(';') + 1);
 
-			std::wstring current_stat_type = current_stat.substr(0, stats.find(':'));
+			std::wstring current_stat_type = current_stat.substr(0, current_stat.find(':'));
 			current_stat.erase(0, current_stat.find(':') + 1);
 
 			if (current_stat_type == L"health") {
@@ -155,16 +160,70 @@ void Player::UpdateStats() {
 				m_maxmana += std::stoi(current_stat);
 			} else
 			if (current_stat_type == L"damage") {
-				std::wstring current_stat_type = current_stat.substr(0, stats.find(':'));
-				// TODO convert wstring to school_enum and then int to increment the correct variable
+				current_stat_type = current_stat.substr(0, current_stat.find(':'));
+				current_stat.erase(0, current_stat.find(':') + 1);
+
+				// convert wstring to school_enum
+				school_enum temp_school_enum;
+				for (const auto& n : map_wstring_to_school) {
+					if (current_stat_type == n.first) {
+						temp_school_enum = n.second;
+						break;
+					}
+				}
+
+				// increment the correct variable
+				if (current_stat.back() == '%') {
+					current_stat.pop_back();
+					m_damage_percentage[int(temp_school_enum)] += std::stoi(current_stat);
+				}
+				else {
+					m_damage_raw[int(temp_school_enum)] += std::stoi(current_stat);
+				}
 			} else
 			if (current_stat_type == L"resistance") {
-				std::wstring current_stat_type = current_stat.substr(0, stats.find(':'));
-				// TODO convert wstring to school_enum and then int to increment the correct variable
+				current_stat_type = current_stat.substr(0, current_stat.find(':'));
+				current_stat.erase(0, current_stat.find(':') + 1);
+
+				// convert wstring to school_enum
+				school_enum temp_school_enum = school_enum::None;
+				for (const auto& n : map_wstring_to_school) {
+					if (current_stat_type == n.first) {
+						temp_school_enum = n.second;
+						break;
+					}
+				}
+
+				// increment the correct variable
+				if (current_stat.back() == '%') {
+					current_stat.pop_back();
+					m_resistance_percentage[int(temp_school_enum)] += std::stoi(current_stat);
+				}
+				else {
+					m_resistance_raw[int(temp_school_enum)] += std::stoi(current_stat);
+				}
 			} else
 			if (current_stat_type == L"accuracy") {
-				std::wstring current_stat_type = current_stat.substr(0, stats.find(':'));
-				// TODO convert wstring to school_enum and then int to increment the correct variable
+				current_stat_type = current_stat.substr(0, current_stat.find(':'));
+				current_stat.erase(0, current_stat.find(':') + 1);
+				
+				// convert wstring to school_enum
+				school_enum temp_school_enum;
+				for (const auto& n : map_wstring_to_school) {
+					if (current_stat_type == n.first) {
+						temp_school_enum = n.second;
+						break;
+					}
+				}
+
+				// increment the correct variable
+				if (current_stat.back() == '%') {
+					current_stat.pop_back();
+					m_accuracy_percentage[int(temp_school_enum)] += std::stoi(current_stat);
+				}
+				else {
+					m_accuracy_raw[int(temp_school_enum)] += std::stoi(current_stat);
+				}
 			} else
 			if (current_stat_type == L"spell") {
 				// TODO add a separate part of a deck for spells acquired through equipment
