@@ -14,10 +14,6 @@
 #include <string>
 #include <vector>
 
-#ifdef _DEBUG
-#include <cassert> // assertion
-#endif
-
 template<typename _T>
 void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 	while (true) {

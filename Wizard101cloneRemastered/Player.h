@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "Item.h"
+#include "Spell.h"
 
 #include <algorithm>
 #include <array>
@@ -61,8 +62,8 @@ protected:
 	int m_hp, m_maxhp;
 	int m_mana, m_maxmana;
 	int m_powerpip_chance;
-	int m_training_points;
-	int m_gold;
+	int m_training_points = 0;
+	int m_gold = 0;
 	std::array<int, 7> m_damage_raw;
 	std::array<int, 7> m_damage_percentage;
 	std::array<int, 7> m_resistance_raw;
@@ -70,6 +71,7 @@ protected:
 	std::array<int, 7> m_accuracy_raw;
 	std::array<int, 7> m_accuracy_percentage;
 	int m_healing_in, m_healing_out;
+	std::vector<Spell*> m_itemcards;
 };
 
 extern Player player;

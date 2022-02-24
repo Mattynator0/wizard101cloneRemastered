@@ -1,7 +1,5 @@
 #include "my_utility.h"
 
-#include <iostream>
-
 int main()
 {
 	//std::wcout.sync_with_stdio(false); // to be determined if it's necessary

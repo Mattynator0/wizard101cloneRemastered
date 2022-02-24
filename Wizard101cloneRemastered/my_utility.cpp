@@ -8,7 +8,7 @@ void ShowConsoleCursor(bool showFlag)
 {
 	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	CONSOLE_CURSOR_INFO     cursorInfo;
+	CONSOLE_CURSOR_INFO cursorInfo;
 
 	GetConsoleCursorInfo(out, &cursorInfo);
 	cursorInfo.bVisible = showFlag; // set the cursor visibility
@@ -114,7 +114,7 @@ void MovePlayer(int x, int y) {
 		case cell_type_enum::Enemy:
 			// start battle
 			// if player won, erase enemy
-			// else teleport player to default spawn in The_Commons
+			// else teleport player to default spawn in The Commons
 			break;
 		case cell_type_enum::Gateway:
 			// teleport to gateway's destination

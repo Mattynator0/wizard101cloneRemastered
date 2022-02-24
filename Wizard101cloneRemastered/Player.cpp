@@ -3,6 +3,7 @@
 Player player(L"Mattynator", school_enum::Fire);
 
 Player::Player(const std::wstring& name, const school_enum school) : m_name(name), m_school(school) {
+	m_equipped_items.fill(nullptr);
 	UpdateStats();
 }
 
@@ -97,16 +98,15 @@ void Player::ClearStats() {
 	m_mana = 0;
 	m_maxmana = 0;
 	m_powerpip_chance = 0;
-	m_training_points = 0;
-	m_gold = 0;
-	std::fill(m_damage_raw.begin(), m_damage_raw.end(), 0);
-	std::fill(m_damage_percentage.begin(), m_damage_percentage.end(), 0);
-	std::fill(m_resistance_raw.begin(), m_resistance_raw.end(), 0);
-	std::fill(m_resistance_percentage.begin(), m_resistance_percentage.end(), 0);
-	std::fill(m_accuracy_raw.begin(), m_accuracy_raw.end(), 0);
-	std::fill(m_accuracy_percentage.begin(), m_accuracy_percentage.end(), 0);
+	m_damage_raw.fill(0);
+	m_damage_percentage.fill(0);
+	m_resistance_raw.fill(0);
+	m_resistance_percentage.fill(0);
+	m_accuracy_raw.fill(0);
+	m_accuracy_percentage.fill(0);
 	m_healing_in = 0;
 	m_healing_out = 0;
+	m_itemcards.clear();
 }
 void Player::UpdateStats() {
 	ClearStats();
@@ -226,7 +226,7 @@ void Player::UpdateStats() {
 				}
 			} else
 			if (current_stat_type == L"spell") {
-				// TODO add a separate part of a deck for spells acquired through equipment
+				// TODO add a separate part of a deck for itemcards
 			}
 		}
 	}
