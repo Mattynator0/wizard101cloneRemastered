@@ -70,6 +70,8 @@ std::array<LevelCap, 49> levelcaps{ {
 void Player::AddExp(const int n) {
 	m_exp += n;
 	while (levelcaps[m_level - 1].cap >= m_exp) {
+		if (levelcaps[m_level].training_point)
+			m_training_points++;
 		m_exp -= levelcaps[m_level - 1].cap;
 		m_level += 1;
 	}
@@ -106,11 +108,11 @@ void Player::ClearStats() {
 	m_accuracy_percentage.fill(0);
 	m_healing_in = 0;
 	m_healing_out = 0;
-	m_itemcards.clear();
+	m_item_cards.clear();
 }
 void Player::UpdateStats() {
 	ClearStats();
-	// level
+	// level-based stats
 	// equations are based on data from https://wizard101.fandom.com/wiki/Level_Chart
 	m_maxmana = 15 + (m_level - 1) * 120 / 49;
 	if (m_level >= 10)
@@ -140,7 +142,7 @@ void Player::UpdateStats() {
 			m_maxhp = 480 + (m_level - 1) * 1320 / 49;
 			break;
 	}
-	// items
+	// items-based stats
 	for (const auto& item : m_equipped_items) {
 		if (!item)
 			continue;
@@ -227,6 +229,11 @@ void Player::UpdateStats() {
 			} else
 			if (current_stat_type == L"spell") {
 				// TODO add a separate part of a deck for itemcards
+				while (current_stat != L"") {
+					current_stat_type = current_stat.substr(0, current_stat.find(','));
+					current_stat.erase(0, current_stat.find(',') + 1);
+					m_item_cards.push_back(std::stoi(current_stat_type));
+				}
 			}
 		}
 	}
@@ -247,3 +254,4 @@ std::array<int, 7> Player::GetAccuracyRaw() const { return m_accuracy_raw; }
 std::array<int, 7> Player::GetAccuracyPercentage() const { return m_accuracy_percentage; }
 int Player::GetHealingIn() const { return m_healing_in; }
 int Player::GetHealingOut() const { return m_healing_out; }
+std::vector<int> Player::GetItemCards() const { return m_item_cards; }

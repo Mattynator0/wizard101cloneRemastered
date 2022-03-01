@@ -19,9 +19,21 @@ void ShowConsoleCursor(bool showFlag)
 void LoadData() {
 	std::ifstream ifile;
 
-	ifile.open("Data/spells.txt");
-	for (int i = 0; i < n_spells; i++) {
-		ifile >> spells.arr[i];
+	ifile.open("Data/Spells/spells.txt");
+	for (int i = 0; i < n_spells[0]; i++) {
+		ifile >> spells.spells[i];
+	}
+	ifile.close();
+
+	ifile.open("Data/Spells/itemcards.txt");
+	for (int i = 0; i < n_spells[1]; i++) {
+		ifile >> spells.item_cards[i];
+	}
+	ifile.close();
+
+	ifile.open("Data/Spells/treasurecards.txt");
+	for (int i = 0; i < n_spells[2]; i++) {
+		ifile >> spells.treasure_cards[i];
 	}
 	ifile.close();
 
@@ -139,14 +151,8 @@ void DrawSpellDeckUI() {
 		// 
 		system("CLS");
 		std::wcout << "Your deck: \n";
-		std::vector<int> deck = player.GetUnlockedSpells();
-		Spell temp_spell;
 		for (int i = 0; i < 5; i++) {
-			if (i >= deck.size())
-				break;
-			temp_spell = spells[deck[i]];
-			std::wcout << temp_spell.GetName() << " | cost: " << temp_spell.GetCost() << /*" | school: " << temp_spell.GetSchool() <<*/ " | accuracy: " // TODO: display school as text (prob using an unordered_map
-					<< temp_spell.GetAccuracy() << "% | " << temp_spell.GetDescripition() << "\n";
+			// display 5 spells from deck per page
 		}
 		choice = _getch();
 	}

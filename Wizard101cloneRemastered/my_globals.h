@@ -9,6 +9,7 @@ enum class locations_enum { None = 0, The_Commons, Headmaster_Ambrose_Office, Ra
 enum class orientation_enum { None = 0, Horizontal, Vertical };
 enum class school_enum { None = 0, Fire, Ice, Storm, Myth, Life, Death, Balance };
 enum class spell_type_enum { None = 0, Damage, Healing, Necromancy, Ward, Charm, Global, Manipulation, Enchantment };
+enum class card_type_enum { None = 0, Spell, Item_Card, Treasure_Card };
 
 extern std::unordered_map<std::wstring, locations_enum> map_wstring_to_location;
 extern std::unordered_map<std::wstring, school_enum> map_wstring_to_school;

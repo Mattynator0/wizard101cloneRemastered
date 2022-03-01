@@ -45,6 +45,7 @@ public:
 	std::array<int, 7> GetAccuracyPercentage() const;
 	int GetHealingIn() const;
 	int GetHealingOut() const;
+	std::vector<int> GetItemCards() const;
 
 	Player(Player&) = delete;
 	void operator=(const Player&) = delete;
@@ -71,7 +72,7 @@ protected:
 	std::array<int, 7> m_accuracy_raw;
 	std::array<int, 7> m_accuracy_percentage;
 	int m_healing_in, m_healing_out;
-	std::vector<Spell*> m_itemcards;
+	std::vector<int> m_item_cards;
 };
 
 extern Player player;

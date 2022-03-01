@@ -5,7 +5,7 @@
 #include <array>
 #include <iostream>
 
-const int n_spells = 22;
+constexpr int n_spells[3] = { 22, 2, 2 };
 
 class Spell
 {
@@ -38,6 +38,8 @@ protected:
 std::istream& operator>> (std::istream& in, Spell& spell);
 
 struct SpellArray {
-	std::array<Spell, n_spells> arr;
-	Spell& operator[] (const int id);
+	std::array<Spell, n_spells[0]> spells;
+	std::array<Spell, n_spells[1]> item_cards;
+	std::array<Spell, n_spells[2]> treasure_cards;
+	Spell& operator() (const int id, card_type_enum card_type);
 };
