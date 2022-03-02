@@ -14,10 +14,6 @@
 #include <string>
 #include <vector>
 
-#ifdef _DEBUG
-#include <cassert> // assertion
-#endif
-
 template<typename _T>
 void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 	while (true) {
@@ -36,14 +32,16 @@ void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 	}
 }
 
-extern std::array<Spell, n_spells> spells;
-extern std::array<Item, n_items> items;
+extern SpellArray spells;
+extern ItemArray items;
 extern std::array<Enemy, n_enemies> enemies;
 
 // ----- entities in current level -----
 extern std::vector<Npc> spawned_npcs;
 extern std::vector<Gateway> spawned_gateways;
 extern std::vector<Enemy> spawned_enemies;
+
+void ShowConsoleCursor(bool showFlag);
 
 // ----- loading stuff from files -----
 void LoadData();
@@ -52,4 +50,4 @@ void LoadLevel(const locations_enum& location);
 // ----- game functionality -----
 void Gameloop();
 void MovePlayer(int x, int y);
-void DrawSpellDeckUI();
+void SpellDeck();

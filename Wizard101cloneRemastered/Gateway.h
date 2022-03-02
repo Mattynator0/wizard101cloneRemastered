@@ -4,9 +4,7 @@
 
 #include <unordered_map>
 
-extern std::unordered_map<std::wstring, locations_enum> map_wstring_to_location;
-
-// when player steps on a gateway, the level changes to 'm_destination'
+// when player steps on a gateway, level changes to 'm_destination'
 class Gateway :
     public Entity
 {
@@ -21,7 +19,7 @@ public:
 
     // ----- data -----
 protected:
-    static constexpr wchar_t m_gateway_horizontal_char = '-';
+    static constexpr wchar_t m_gateway_horizontal_char = *L"\u2500";
     static constexpr wchar_t m_gateway_vertical_char = '|';
     locations_enum m_destination;
     Position m_destination_spawn_pos;

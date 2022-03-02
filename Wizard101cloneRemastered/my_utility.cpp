@@ -1,22 +1,45 @@
 #include "my_utility.h"
 
-std::array<Spell, n_spells> spells;
-std::array<Item, n_items> items;
+SpellArray spells;
+ItemArray items;
 std::array<Enemy, n_enemies> enemies;
 
-// ----- loading stuff from files -----
+void ShowConsoleCursor(bool showFlag)
+{
+	HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	CONSOLE_CURSOR_INFO cursorInfo;
+
+	GetConsoleCursorInfo(out, &cursorInfo);
+	cursorInfo.bVisible = showFlag; // set the cursor visibility
+	SetConsoleCursorInfo(out, &cursorInfo);
+}
+
+// ----- loading stuff in from files -----
 void LoadData() {
 	std::ifstream ifile;
 
-	ifile.open("Data/spells.txt");
-	for (int i = 0; i < n_spells; i++) {
-		ifile >> spells[i];
+	ifile.open("Data/Spells/spells.txt");
+	for (int i = 0; i < n_spells[0]; i++) {
+		ifile >> spells.spells[i];
+	}
+	ifile.close();
+
+	ifile.open("Data/Spells/itemcards.txt");
+	for (int i = 0; i < n_spells[1]; i++) {
+		ifile >> spells.item_cards[i];
+	}
+	ifile.close();
+
+	ifile.open("Data/Spells/treasurecards.txt");
+	for (int i = 0; i < n_spells[2]; i++) {
+		ifile >> spells.treasure_cards[i];
 	}
 	ifile.close();
 
 	ifile.open("Data/items.txt");
 	for (int i = 0; i < n_items; i++) {
-		ifile >> items[i];
+		ifile >> items.arr[i];
 	}
 	ifile.close();
 
@@ -80,7 +103,7 @@ void Gameloop() {
 				break;
 			case 'p':
 				// open spell deck
-				DrawSpellDeckUI();
+				SpellDeck();
 				break;
 			case 'q':
 				// open quests tab
@@ -103,7 +126,7 @@ void MovePlayer(int x, int y) {
 		case cell_type_enum::Enemy:
 			// start battle
 			// if player won, erase enemy
-			// else teleport player to default spawn in The_Commons
+			// else teleport player to default spawn in The Commons
 			break;
 		case cell_type_enum::Gateway:
 			// teleport to gateway's destination
@@ -118,19 +141,57 @@ void MovePlayer(int x, int y) {
 			break;
 	}
 }
-void DrawSpellDeckUI() {
+void SpellDeck() {
 	int deck_page = 1;
-	while (true) {
+	Deck deck = player.GetDeck();
+	char choice;
+	bool loop = true;
+	while (loop) {
+		// Your deck:
+		// <equipped spells' stats + amount equipped / max (max determined by equipped deck item)>
+		// Your spells:
+		// 
 		system("CLS");
 		std::wcout << "Your deck: \n";
-		std::vector<int> deck = player.GetSpellsInDeck();
-		Spell temp_spell;
 		for (int i = 0; i < 5; i++) {
-			if (i >= deck.size())
+			if ((deck_page - 1) * 5 + i < deck.spells.size()) {
+				auto spell = spells(deck.spells[(deck_page - 1) * 5 + i], card_type_enum::Spell);
+				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
+				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
+				for (const auto& n : map_wstring_to_location) {
+					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+						std::wcout << n.first;
+						break;
+					}
+				}
+				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+			}
+		}
+		// <<   Page: 2/3   >>
+		if (deck_page != 1)
+			std::wcout << "<<   ";
+		else std::wcout << "     ";
+		//int max_page = deck.spells.size() / 5 + 1;
+		int max_page = 2;
+		std::wcout << "Page: " << deck_page << " / " << max_page;
+		if (deck_page != max_page)
+			std::wcout << "   >>";
+		choice = _getch();
+		switch (choice) {
+			case 75: // left arrow
+				if (deck_page != 1)
+					deck_page--;
 				break;
-			temp_spell = spells[deck[i]];
-			std::wcout << temp_spell.GetName() << " | cost: " << temp_spell.GetCost() << /*" | school: " << temp_spell.GetSchool() <<*/ " | accuracy: " 
-					<< temp_spell.GetAccuracy() << " | " << temp_spell.GetDescripition() << "\n";
+			case 77: // right arrow
+				if (deck_page != max_page)
+					deck_page++;
+				break;
+			case 27: // Esc
+				loop = false;
+				break;
+			case 'p':
+				loop = false;
+				break;
 		}
 	}
 }

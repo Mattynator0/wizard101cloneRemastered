@@ -1,12 +1,5 @@
 #include "Gateway.h"
 
-std::unordered_map<std::wstring, locations_enum> map_wstring_to_location = {
-    { L"Headmaster Ambrose Office", locations_enum::Headmaster_Ambrose_Office },
-    { L"The Commons", locations_enum::The_Commons },
-    { L"Ravenwood", locations_enum::Ravenwood },
-    { L"Unicorn Way", locations_enum::Unicorn_Way }
-};
-
 // ----- functions -----
 Gateway::Gateway(locations_enum location, Position destination_spawn_pos, orientation_enum orientation)
     : m_destination(location), m_destination_spawn_pos(destination_spawn_pos), m_orientation(orientation) {}

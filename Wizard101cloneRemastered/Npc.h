@@ -13,8 +13,8 @@ public:
 	Npc(wchar_t appearance, std::wstring name);
 
 	// <-- encapsulation -->
-	std::wstring GetName();
-	wchar_t GetAppearance();
+	std::wstring GetName() const;
+	wchar_t GetAppearance() const;
 
 	// ----- data -----
 private:

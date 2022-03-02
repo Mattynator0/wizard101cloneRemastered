@@ -1,1 +1,0 @@
-1 Scarab;1 7 1 85 65-105 outgoing balance dmg

@@ -14,7 +14,7 @@ std::istream& operator>> (std::istream& in, Level& level) {
 	in >> level.m_level_size.y; // temp_char gets rid of ';' character separating data
 	in.ignore(INT_MAX, '\n'); // get rid of EOL
 
-	// load npc data
+	// load NPC data
 	std::wstring wstr;
 	while (true) {
 		std::getline(in, temp_str);
@@ -53,8 +53,10 @@ std::istream& operator>> (std::istream& in, Level& level) {
 		}
 		wstr.erase(0, wstr.find(';') + 1); // The Commons;-1;-1;5;0
 		for (const auto& n : map_wstring_to_location) {
-			if (wstr.substr(0, wstr.find(';')) == n.first)
+			if (wstr.substr(0, wstr.find(';')) == n.first) {
 				temp_locations_enum = n.second; // locations_enum::The_Commons
+				break;
+			}
 		}
 		wstr.erase(0, wstr.find(';') + 1); // 3;5;5;0
 		temp_position.x = std::stoi(wstr.substr(0, wstr.find(';')));
@@ -68,19 +70,23 @@ std::istream& operator>> (std::istream& in, Level& level) {
 			});
 	}
 
+	// read the general layout of the level (wall or not wall)
 	for (int i = 0; i < level.m_level_size.y; i++) {
 		in >> temp_str;
 		wstr = widen(temp_str);
-		for (int j = 0; j < level.m_level_size.x; j++)
-		if (wstr[j] == level.m_barrier_char)
-			level.m_cells.push_back({ cell_type_enum::Barrier, nullptr });
-		else level.m_cells.push_back({ cell_type_enum::Empty, nullptr });
+		for (int j = 0; j < level.m_level_size.x; j++) {
+			if (wstr[j] == level.m_barrier_char)
+				level.m_cells.push_back({ cell_type_enum::Barrier, nullptr });
+			else level.m_cells.push_back({ cell_type_enum::Empty, nullptr });
+		}
 	}
 
+	// spawn NPCs (put pointers to them inside main vector)
 	for (int i = 0; i < spawned_npcs.size(); i++) {
 		level.SpawnEntity(&spawned_npcs[i]);
 	}
 
+	// spawn gateways (put pointers to them inside main vector)
 	for (int i = 0; i < spawned_gateways.size(); i++) {
 		level.SpawnEntity(&spawned_gateways[i]);
 	}
@@ -160,7 +166,7 @@ void Level::DrawLevel() {
 	}
 }
 
-LevelLayoutCell Level::GetCell(const Position position) { return m_cells[position.y * m_level_size.x + position.x]; }
+LevelLayoutCell Level::GetCell(const Position position) const { return m_cells[position.y * m_level_size.x + position.x]; }
 void Level::ClearCell(const Position position) {
 	auto cell = m_cells[position.y * m_level_size.x + position.x];
 	switch (cell.cell_type) {
