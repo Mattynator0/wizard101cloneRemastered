@@ -112,4 +112,4 @@
 6001 Flawed opal band;7 0 0;health:10;
 6002 Flawed pearl ring;7 0 0;mana:10;
 6003 Simple opal ring;7 0 0;health:20;
-7001 Starter deck;8 0 0;deck_size:14;max_copies:3;
+7001 Starter deck;8 0 0;deck size:14,3;

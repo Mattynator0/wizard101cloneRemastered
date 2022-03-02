@@ -14,7 +14,7 @@ std::istream& operator>> (std::istream& in, Level& level) {
 	in >> level.m_level_size.y; // temp_char gets rid of ';' character separating data
 	in.ignore(INT_MAX, '\n'); // get rid of EOL
 
-	// load npc data
+	// load NPC data
 	std::wstring wstr;
 	while (true) {
 		std::getline(in, temp_str);
@@ -70,19 +70,23 @@ std::istream& operator>> (std::istream& in, Level& level) {
 			});
 	}
 
+	// read the general layout of the level (wall or not wall)
 	for (int i = 0; i < level.m_level_size.y; i++) {
 		in >> temp_str;
 		wstr = widen(temp_str);
-		for (int j = 0; j < level.m_level_size.x; j++)
-		if (wstr[j] == level.m_barrier_char)
-			level.m_cells.push_back({ cell_type_enum::Barrier, nullptr });
-		else level.m_cells.push_back({ cell_type_enum::Empty, nullptr });
+		for (int j = 0; j < level.m_level_size.x; j++) {
+			if (wstr[j] == level.m_barrier_char)
+				level.m_cells.push_back({ cell_type_enum::Barrier, nullptr });
+			else level.m_cells.push_back({ cell_type_enum::Empty, nullptr });
+		}
 	}
 
+	// spawn NPCs (put pointers to them inside main vector)
 	for (int i = 0; i < spawned_npcs.size(); i++) {
 		level.SpawnEntity(&spawned_npcs[i]);
 	}
 
+	// spawn gateways (put pointers to them inside main vector)
 	for (int i = 0; i < spawned_gateways.size(); i++) {
 		level.SpawnEntity(&spawned_gateways[i]);
 	}

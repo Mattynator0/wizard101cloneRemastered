@@ -15,7 +15,7 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-// ----- loading stuff from files -----
+// ----- loading stuff in from files -----
 void LoadData() {
 	std::ifstream ifile;
 
@@ -103,7 +103,7 @@ void Gameloop() {
 				break;
 			case 'p':
 				// open spell deck
-				DrawSpellDeckUI();
+				SpellDeck();
 				break;
 			case 'q':
 				// open quests tab
@@ -141,10 +141,12 @@ void MovePlayer(int x, int y) {
 			break;
 	}
 }
-void DrawSpellDeckUI() {
+void SpellDeck() {
 	int deck_page = 1;
+	Deck deck = player.GetDeck();
 	char choice;
-	while (true) {
+	bool loop = true;
+	while (loop) {
 		// Your deck:
 		// <equipped spells' stats + amount equipped / max (max determined by equipped deck item)>
 		// Your spells:
@@ -152,8 +154,44 @@ void DrawSpellDeckUI() {
 		system("CLS");
 		std::wcout << "Your deck: \n";
 		for (int i = 0; i < 5; i++) {
-			// display 5 spells from deck per page
+			if ((deck_page - 1) * 5 + i < deck.spells.size()) {
+				auto spell = spells(deck.spells[(deck_page - 1) * 5 + i], card_type_enum::Spell);
+				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
+				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
+				for (const auto& n : map_wstring_to_location) {
+					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+						std::wcout << n.first;
+						break;
+					}
+				}
+				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+			}
 		}
+		// <<   Page: 2/3   >>
+		if (deck_page != 1)
+			std::wcout << "<<   ";
+		else std::wcout << "     ";
+		//int max_page = deck.spells.size() / 5 + 1;
+		int max_page = 2;
+		std::wcout << "Page: " << deck_page << " / " << max_page;
+		if (deck_page != max_page)
+			std::wcout << "   >>";
 		choice = _getch();
+		switch (choice) {
+			case 75: // left arrow
+				if (deck_page != 1)
+					deck_page--;
+				break;
+			case 77: // right arrow
+				if (deck_page != max_page)
+					deck_page++;
+				break;
+			case 27: // Esc
+				loop = false;
+				break;
+			case 'p':
+				loop = false;
+				break;
+		}
 	}
 }

@@ -1,10 +1,30 @@
 #include "Player.h"
 
+void Deck::AddSpell(int id) {
+	auto first = std::distance(spells.begin(), std::lower_bound(spells.begin(), spells.end(), id)); // index of the first value equal to 'id'
+	if (first == spells.size() || spells[first] != id)
+		return;
+
+	int n = std::distance(spells.begin(), std::upper_bound(spells.begin(), spells.end(), id)) - first + 1; // count of values equal to 'id'
+	if (spells.size() < max_spell_count && n < max_copies)
+	{
+		spells.push_back(id);
+		std::sort(spells.begin(), spells.end());
+	}
+}
+void Deck::Clear() {
+	max_spell_count = 0;
+	max_copies = 0;
+	spells.clear();
+}
+
 Player player(L"Mattynator", school_enum::Fire);
 
 Player::Player(const std::wstring& name, const school_enum school) : m_name(name), m_school(school) {
 	m_equipped_items.fill(nullptr);
 	UpdateStats();
+	m_hp = m_maxhp;
+	m_mana = m_maxmana;
 }
 
 std::wstring& Player::GetName() { return m_name; }
@@ -109,8 +129,10 @@ void Player::ClearStats() {
 	m_healing_in = 0;
 	m_healing_out = 0;
 	m_item_cards.clear();
+	m_deck.Clear();
 }
 void Player::UpdateStats() {
+	std::vector<int> temp_vec = m_deck.spells;
 	ClearStats();
 	// level-based stats
 	// equations are based on data from https://wizard101.fandom.com/wiki/Level_Chart
@@ -148,11 +170,15 @@ void Player::UpdateStats() {
 			continue;
 		std::wstring stats = item->GetStats();
 		while (stats != L"") {
-			// sting structure:  stat1;stat2;...;
+			// string structure:  stat1;stat2;...;
+			// get all the info about first stat in string
 			std::wstring current_stat = stats.substr(0, stats.find(';'));
+			// erase it and the separator ';' from "master string"
 			stats.erase(0, stats.find(';') + 1);
 
+			// get the first keyword
 			std::wstring current_stat_type = current_stat.substr(0, current_stat.find(':'));
+			// erase it and the separator ':' from current stat string
 			current_stat.erase(0, current_stat.find(':') + 1);
 
 			if (current_stat_type == L"health") {
@@ -234,6 +260,27 @@ void Player::UpdateStats() {
 					current_stat.erase(0, current_stat.find(',') + 1);
 					m_item_cards.push_back(std::stoi(current_stat_type));
 				}
+			} else
+			if (current_stat_type == L"deck size") {
+				m_deck.max_spell_count = std::stoi(current_stat.substr(0, current_stat.find(',')));
+				current_stat.erase(0, stats.find(',') + 1);
+				m_deck.max_copies = std::stoi(current_stat.substr(0, current_stat.find(',')));
+
+				// find the longest sequence of the same numbers
+				int longest_seq = 0;
+				int n = -1, count;
+				for (int i : temp_vec) {
+					if (i != n) {
+						count = 0;
+						n = i;
+					}
+					else count++;
+					if (count > longest_seq)
+						longest_seq = count;
+				}
+				// if the deck is large enough, copy the spells back into it
+				if (m_deck.max_spell_count >= temp_vec.size() && m_deck.max_copies >= longest_seq)
+					m_deck.spells = temp_vec;
 			}
 		}
 	}
@@ -254,4 +301,5 @@ std::array<int, 7> Player::GetAccuracyRaw() const { return m_accuracy_raw; }
 std::array<int, 7> Player::GetAccuracyPercentage() const { return m_accuracy_percentage; }
 int Player::GetHealingIn() const { return m_healing_in; }
 int Player::GetHealingOut() const { return m_healing_out; }
+Deck Player::GetDeck() const { return m_deck; }
 std::vector<int> Player::GetItemCards() const { return m_item_cards; }

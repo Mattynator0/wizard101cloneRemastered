@@ -8,6 +8,14 @@
 #include <vector>
 
 struct LevelCap;
+struct Deck {
+	int max_spell_count = 0;
+	int max_copies = 0;
+	std::vector<int> spells;
+
+	void AddSpell(int id);
+	void Clear();
+};
 
 class Player : public Entity
 {
@@ -45,6 +53,7 @@ public:
 	std::array<int, 7> GetAccuracyPercentage() const;
 	int GetHealingIn() const;
 	int GetHealingOut() const;
+	Deck GetDeck() const;
 	std::vector<int> GetItemCards() const;
 
 	Player(Player&) = delete;
@@ -72,6 +81,8 @@ protected:
 	std::array<int, 7> m_accuracy_raw;
 	std::array<int, 7> m_accuracy_percentage;
 	int m_healing_in, m_healing_out;
+
+	Deck m_deck;
 	std::vector<int> m_item_cards;
 };
 

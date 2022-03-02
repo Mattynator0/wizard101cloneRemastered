@@ -50,4 +50,4 @@ void LoadLevel(const locations_enum& location);
 // ----- game functionality -----
 void Gameloop();
 void MovePlayer(int x, int y);
-void DrawSpellDeckUI();
+void SpellDeck();
