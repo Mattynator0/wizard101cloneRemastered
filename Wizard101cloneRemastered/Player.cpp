@@ -1,16 +1,20 @@
 #include "Player.h"
 
 void Deck::AddSpell(int id) {
-	auto first = std::distance(spells.begin(), std::lower_bound(spells.begin(), spells.end(), id)); // index of the first value equal to 'id'
-	if (first == spells.size() || spells[first] != id)
-		return;
-
-	int n = std::distance(spells.begin(), std::upper_bound(spells.begin(), spells.end(), id)) - first + 1; // count of values equal to 'id'
-	if (spells.size() < max_spell_count && n < max_copies)
+	if (spells.size() < max_spell_count && GetSpellCount(id) < max_copies)
 	{
 		spells.push_back(id);
 		std::sort(spells.begin(), spells.end());
 	}
+}
+void Deck::RemoveSpell(int id) {
+
+}
+int Deck::GetSpellCount(int id) {
+	auto first = std::distance(spells.begin(), std::lower_bound(spells.begin(), spells.end(), id)); // index of the first value equal to 'id'
+	if (first == spells.size() || spells[first] != id)
+		return 0;
+	return std::distance(spells.begin(), std::upper_bound(spells.begin(), spells.end(), id)) - first + 1; // count of values equal to 'id'
 }
 void Deck::Clear() {
 	max_spell_count = 0;

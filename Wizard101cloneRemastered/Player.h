@@ -14,6 +14,8 @@ struct Deck {
 	std::vector<int> spells;
 
 	void AddSpell(int id);
+	void RemoveSpell(int id);
+	int GetSpellCount(int id);
 	void Clear();
 };
 

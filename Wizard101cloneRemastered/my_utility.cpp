@@ -142,8 +142,9 @@ void MovePlayer(int x, int y) {
 	}
 }
 void SpellDeck() {
-	int deck_page = 1;
+	int deck_page = 1, spells_page = 1;
 	Deck deck = player.GetDeck();
+	auto unlocked_spells = player.GetUnlockedSpells();
 	char choice;
 	bool loop = true;
 	while (loop) {
@@ -171,10 +172,33 @@ void SpellDeck() {
 		if (deck_page != 1)
 			std::wcout << "<<   ";
 		else std::wcout << "     ";
-		//int max_page = deck.spells.size() / 5 + 1;
-		int max_page = 2;
-		std::wcout << "Page: " << deck_page << " / " << max_page;
-		if (deck_page != max_page)
+		int max_deck_page = deck.spells.size() / 5 + 1;
+		std::wcout << "Page: " << deck_page << " / " << max_deck_page;
+		if (deck_page != max_deck_page)
+			std::wcout << "   >>";
+
+		std::wcout << "\n\nYour spells: \n";
+		for (int i = 0; i < 5; i++) {
+			if ((spells_page - 1) * 5 + i < unlocked_spells.size()) {
+				auto spell = spells(deck.spells[(deck_page - 1) * 5 + i], card_type_enum::Spell);
+				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
+				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
+				for (const auto& n : map_wstring_to_location) {
+					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+						std::wcout << n.first;
+						break;
+					}
+				}
+				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+			}
+		}
+		// <<   Page: 2/3   >>
+		if (deck_page != 1)
+			std::wcout << "<<   ";
+		else std::wcout << "     ";
+		int max_deck_page = deck.spells.size() / 5 + 1;
+		std::wcout << "Page: " << deck_page << " / " << max_deck_page;
+		if (deck_page != max_deck_page)
 			std::wcout << "   >>";
 		choice = _getch();
 		switch (choice) {
