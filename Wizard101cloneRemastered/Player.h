@@ -57,6 +57,7 @@ public:
 	int GetHealingOut() const;
 	Deck GetDeck() const;
 	std::vector<int> GetItemCards() const;
+	std::vector<int> GetEquippedTreasureCards() const;
 
 	Player(Player&) = delete;
 	void operator=(const Player&) = delete;
@@ -86,6 +87,7 @@ protected:
 
 	Deck m_deck;
 	std::vector<int> m_item_cards;
+	std::vector<int> m_equipped_treasure_cards;
 };
 
 extern Player player;

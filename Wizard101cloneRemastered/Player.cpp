@@ -307,3 +307,4 @@ int Player::GetHealingIn() const { return m_healing_in; }
 int Player::GetHealingOut() const { return m_healing_out; }
 Deck Player::GetDeck() const { return m_deck; }
 std::vector<int> Player::GetItemCards() const { return m_item_cards; }
+std::vector<int> Player::GetEquippedTreasureCards() const { return m_equipped_treasure_cards; }
