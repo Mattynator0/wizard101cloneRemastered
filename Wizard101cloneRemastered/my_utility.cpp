@@ -121,9 +121,6 @@ void Gameloop() {
 			case ESCAPE_KEY:
 				// open options menu
 				break;
-			default:
-				continue;
-
 		}
 	}
 }
@@ -162,12 +159,22 @@ void SpellDeckMenu() {
 	while (loop) {
 		Deck deck = player.GetDeck();
 		auto unlocked_spells = player.GetUnlockedSpells();
+		auto eq_tc = player.GetEquippedTreasureCards();
+		auto owned_tc = player.GetTreasureCards();
+		auto owned_ic = player.GetItemCards();
 		// Your deck:
 		// <equipped spells' stats + amount equipped / max (max is determined by equipped deck item)>
 		// Your spells:
 		// <unlocked spells' stats>
-		// Your treasure cards
+		// Your equipped treasure cards:
+		// <equipped treasure cards' stats>
+		// Your treasure cards:
+		// <treasure cards' stats>
+		// Your item cards:
+		// <item cards' stats>
 		system("CLS");
+
+		// deck
 		std::wcout << "Your deck: \n";
 		for (int i = 0; i < 5; i++) {
 			if ((deck_page - 1) * 5 + i < deck.spells.size()) {
@@ -185,14 +192,16 @@ void SpellDeckMenu() {
 		}
 		// <<   Page: 2/3   >>
 		if (deck_page != 1)
-			std::wcout << "<<   ";
-		else std::wcout << "     ";
+			std::wcout << "<<  ";
+		else std::wcout << "    ";
 		int max_deck_page = deck.spells.size() / 5 + 1;
-		std::wcout << "Page: " << deck_page << " / " << max_deck_page;
+		if (spell_deck_menu == spell_deck_menu_enum::Deck)
+			std::wcout << ">Page: " << deck_page << " / " << max_deck_page;
+		else std::wcout << " Page: " << deck_page << " / " << max_deck_page;
 		if (deck_page != max_deck_page)
 			std::wcout << "   >>";
 
-
+		//  unlocked spells
 		std::wcout << "\n\nYour spells: \n";
 		for (int i = 0; i < 5; i++) {
 			if ((spells_page - 1) * 5 + i < unlocked_spells.size()) {
@@ -211,11 +220,98 @@ void SpellDeckMenu() {
 		}
 		// <<   Page: 2/3   >>
 		if (spells_page != 1)
-			std::wcout << "<<   ";
-		else std::wcout << "     ";
+			std::wcout << "<<  ";
+		else std::wcout << "    ";
 		int max_spells_page = unlocked_spells.size() / 5 + 1;
-		std::wcout << "Page: " << spells_page << " / " << max_spells_page;
+		if (spell_deck_menu == spell_deck_menu_enum::Unlocked_Spells)
+			std::wcout << ">Page: " << spells_page << " / " << max_spells_page;
+		else std::wcout << " Page: " << spells_page << " / " << max_spells_page;
 		if (spells_page != max_spells_page)
+			std::wcout << "   >>";
+
+		// equipped treasure cards
+		std::wcout << "\n\nYour equipped treasure cards: \n";
+		for (int i = 0; i < 5; i++) {
+			if ((eq_tc_page - 1) * 5 + i < eq_tc.size()) {
+
+				auto spell = spells(eq_tc[(eq_tc_page - 1) * 5 + i], card_type_enum::Treasure_Card);
+				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
+				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
+				for (const auto& n : map_wstring_to_location) {
+					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+						std::wcout << n.first;
+						break;
+					}
+				}
+				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+			}
+		}
+		// <<   Page: 2/3   >>
+		if (eq_tc_page != 1)
+			std::wcout << "<<  ";
+		else std::wcout << "    ";
+		int max_eq_tc_page = eq_tc.size() / 5 + 1;
+		if (spell_deck_menu == spell_deck_menu_enum::Equipped_Treasure_Cards)
+			std::wcout << ">Page: " << eq_tc_page << " / " << max_eq_tc_page;
+		else std::wcout << " Page: " << eq_tc_page << " / " << max_eq_tc_page;
+		if (eq_tc_page != max_eq_tc_page)
+			std::wcout << "   >>";
+
+		// owned treasure cards
+		std::wcout << "\n\nYour treasure cards: \n";
+		for (int i = 0; i < 5; i++) {
+			if ((tc_page - 1) * 5 + i < owned_tc.size()) {
+
+				auto spell = spells(owned_tc[(tc_page - 1) * 5 + i], card_type_enum::Treasure_Card);
+				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
+				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
+				for (const auto& n : map_wstring_to_location) {
+					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+						std::wcout << n.first;
+						break;
+					}
+				}
+				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+			}
+		}
+		// <<   Page: 2/3   >>
+		if (tc_page != 1)
+			std::wcout << "<<  ";
+		else std::wcout << "    ";
+		int max_tc_page = owned_tc.size() / 5 + 1;
+		if (spell_deck_menu == spell_deck_menu_enum::Treasure_Cards)
+			std::wcout << ">Page: " << tc_page << " / " << max_tc_page;
+		else std::wcout << " Page: " << tc_page << " / " << max_tc_page;
+		
+		if (tc_page != max_tc_page)
+			std::wcout << "   >>";
+
+		// owned item cards
+		std::wcout << "\n\nYour item cards: \n";
+		for (int i = 0; i < 5; i++) {
+			if ((ic_page - 1) * 5 + i < owned_ic.size()) {
+
+				auto spell = spells(owned_ic[(ic_page - 1) * 5 + i], card_type_enum::Item_Card);
+				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
+				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
+				for (const auto& n : map_wstring_to_location) {
+					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+						std::wcout << n.first;
+						break;
+					}
+				}
+				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+			}
+		}
+		// <<   Page: 2/3   >>
+		if (ic_page != 1)
+			std::wcout << "<<  ";
+		else std::wcout << "    ";
+		int max_ic_page = owned_ic.size() / 5 + 1;
+		if (spell_deck_menu == spell_deck_menu_enum::Item_Cards)
+			std::wcout << ">Page: " << ic_page << " / " << max_ic_page;
+		else std::wcout << " Page: " << ic_page << " / " << max_ic_page;
+		if (ic_page != max_ic_page)
 			std::wcout << "   >>";
 
 		choice = _getch();
@@ -226,8 +322,11 @@ void SpellDeckMenu() {
 					case spell_deck_menu_enum::Unlocked_Spells:
 						spell_deck_menu = spell_deck_menu_enum::Deck;
 						break;
-					case spell_deck_menu_enum::Treasure_Cards:
+					case spell_deck_menu_enum::Equipped_Treasure_Cards:
 						spell_deck_menu = spell_deck_menu_enum::Unlocked_Spells;
+						break;
+					case spell_deck_menu_enum::Treasure_Cards:
+						spell_deck_menu = spell_deck_menu_enum::Equipped_Treasure_Cards;
 						break;
 					case spell_deck_menu_enum::Item_Cards:
 						spell_deck_menu = spell_deck_menu_enum::Treasure_Cards;
@@ -241,6 +340,9 @@ void SpellDeckMenu() {
 					spell_deck_menu = spell_deck_menu_enum::Unlocked_Spells;
 					break;
 				case spell_deck_menu_enum::Unlocked_Spells:
+					spell_deck_menu = spell_deck_menu_enum::Equipped_Treasure_Cards;
+					break;
+				case spell_deck_menu_enum::Equipped_Treasure_Cards:
 					spell_deck_menu = spell_deck_menu_enum::Treasure_Cards;
 					break;
 				case spell_deck_menu_enum::Treasure_Cards:
@@ -258,6 +360,10 @@ void SpellDeckMenu() {
 				case spell_deck_menu_enum::Unlocked_Spells:
 					if (spells_page != 1)
 						spells_page--;
+					break;
+				case spell_deck_menu_enum::Equipped_Treasure_Cards:
+					if (eq_tc_page != 1)
+						eq_tc_page--;
 					break;
 				case spell_deck_menu_enum::Treasure_Cards:
 					if (tc_page != 1)
@@ -280,6 +386,10 @@ void SpellDeckMenu() {
 					if (spells_page != max_spells_page)
 						spells_page++;
 					break;
+				case spell_deck_menu_enum::Equipped_Treasure_Cards:
+					if (eq_tc_page != max_eq_tc_page)
+						eq_tc_page++;
+					break;
 				case spell_deck_menu_enum::Treasure_Cards:
 					if (tc_page != max_tc_page)
 						tc_page++;
@@ -293,6 +403,13 @@ void SpellDeckMenu() {
 			case 'p':
 			case ESCAPE_KEY:
 				loop = false;
+				break;
+			// TODO: add functionality to 1-5 keys
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
 				break;
 		}
 	}

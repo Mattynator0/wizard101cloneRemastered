@@ -8,7 +8,12 @@ void Deck::AddSpell(int id) {
 	}
 }
 void Deck::RemoveSpell(int id) {
-
+	for (int i = 0; i < spells.size(); i++) {
+		if (spells[i] == id) {
+			spells.erase(spells.begin() + i);
+			break;
+		}
+	}
 }
 int Deck::GetSpellCount(int id) {
 	auto first = std::distance(spells.begin(), std::lower_bound(spells.begin(), spells.end(), id)); // index of the first value equal to 'id'
@@ -117,6 +122,27 @@ void Player::EquipItem(Item* item_ptr) {
 	if (item_ptr->GetLevelReq() <= m_level && (item_ptr->GetSchoolReq() == m_school || item_ptr->GetSchoolReq() == school_enum::None))
 		m_equipped_items[int(item_ptr->GetType())] = item_ptr;
 	UpdateStats();
+}
+void Player::EquipTreasureCard(int id) {
+	if (m_equipped_treasure_cards.size() == m_deck.max_tc_count)
+		return;
+
+	for (int i = 0; i < m_treasure_cards.size(); i++) {
+		if (m_treasure_cards[i] == id) {
+			m_treasure_cards.erase(m_treasure_cards.begin() + i);
+			m_equipped_treasure_cards.push_back(id);
+			break;
+		}
+	}
+}
+void Player::UnequipTreasureCard(int id) {
+	for (int i = 0; i < m_equipped_treasure_cards.size(); i++) {
+		if (m_equipped_treasure_cards[i] == id) {
+			m_equipped_treasure_cards.erase(m_equipped_treasure_cards.begin() + i);
+			m_treasure_cards.push_back(id);
+			break;
+		}
+	}
 }
 void Player::ClearStats() {
 	m_hp = 0;
@@ -257,8 +283,7 @@ void Player::UpdateStats() {
 					m_accuracy_raw[int(temp_school_enum)] += std::stoi(current_stat);
 				}
 			} else
-			if (current_stat_type == L"spell") {
-				// TODO add a separate part of a deck for itemcards
+			if (current_stat_type == L"item card") {
 				while (current_stat != L"") {
 					current_stat_type = current_stat.substr(0, current_stat.find(','));
 					current_stat.erase(0, current_stat.find(',') + 1);
@@ -269,10 +294,12 @@ void Player::UpdateStats() {
 				m_deck.max_spell_count = std::stoi(current_stat.substr(0, current_stat.find(',')));
 				current_stat.erase(0, stats.find(',') + 1);
 				m_deck.max_copies = std::stoi(current_stat.substr(0, current_stat.find(',')));
+				current_stat.erase(0, stats.find(',') + 1);
+				m_deck.max_tc_count = std::stoi(current_stat.substr(0, current_stat.find(',')));
 
-				// find the longest sequence of the same numbers
+				// find the longest sequence of the same numbers (i.e. largest number of copies of the same spell)
 				int longest_seq = 0;
-				int n = -1, count;
+				int n = -1, count = 0;
 				for (int i : temp_vec) {
 					if (i != n) {
 						count = 0;
@@ -308,3 +335,4 @@ int Player::GetHealingOut() const { return m_healing_out; }
 Deck Player::GetDeck() const { return m_deck; }
 std::vector<int> Player::GetItemCards() const { return m_item_cards; }
 std::vector<int> Player::GetEquippedTreasureCards() const { return m_equipped_treasure_cards; }
+std::vector<int> Player::GetTreasureCards() const { return m_treasure_cards; }

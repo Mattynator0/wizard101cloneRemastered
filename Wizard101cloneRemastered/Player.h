@@ -11,6 +11,7 @@ struct LevelCap;
 struct Deck {
 	int max_spell_count = 0;
 	int max_copies = 0;
+	int max_tc_count = 0;
 	std::vector<int> spells;
 
 	void AddSpell(int id);
@@ -37,6 +38,8 @@ public:
 	void AddItem(int id);
 	std::array<Item*, 8> GetEquippedItems() const;
 	void EquipItem(Item* item_ptr);
+	void EquipTreasureCard(int id);
+	void UnequipTreasureCard(int id);
 	void ClearStats();
 	void UpdateStats();
 
@@ -58,6 +61,7 @@ public:
 	Deck GetDeck() const;
 	std::vector<int> GetItemCards() const;
 	std::vector<int> GetEquippedTreasureCards() const;
+	std::vector<int> GetTreasureCards() const;
 
 	Player(Player&) = delete;
 	void operator=(const Player&) = delete;
@@ -88,6 +92,7 @@ protected:
 	Deck m_deck;
 	std::vector<int> m_item_cards;
 	std::vector<int> m_equipped_treasure_cards;
+	std::vector<int> m_treasure_cards;
 };
 
 extern Player player;

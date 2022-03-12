@@ -1,5 +1,28 @@
 #include "my_globals.h"
 
+std::unordered_map<std::wstring, locations_enum> map_wstring_to_location = {
+    { L"Headmaster Ambrose Office", locations_enum::Headmaster_Ambrose_Office },
+    { L"The Commons", locations_enum::The_Commons },
+    { L"Ravenwood", locations_enum::Ravenwood },
+    { L"Unicorn Way", locations_enum::Unicorn_Way }
+};
+std::unordered_map<std::wstring, school_enum> map_wstring_to_school = {
+    { L"Fire", school_enum::Fire },
+    { L"fire", school_enum::Fire },
+    { L"Ice", school_enum::Ice },
+    { L"ice", school_enum::Ice },
+    { L"Storm", school_enum::Storm },
+    { L"storm", school_enum::Storm },
+    { L"Myth", school_enum::Myth },
+    { L"myth", school_enum::Myth },
+    { L"Life", school_enum::Life },
+    { L"life", school_enum::Life },
+    { L"Death", school_enum::Death },
+    { L"death", school_enum::Death },
+    { L"Balance", school_enum::Balance },
+    { L"balance", school_enum::Balance },
+};
+
 // convert a wide Unicode string to a UTF8 string
 std::string narrow(const std::wstring& wstr)
 {

@@ -49,10 +49,7 @@ int main()
 			* enchantment - can be used to 'enchant' a card and convert it to a treasure card with a boosted stat (generally increased damage or accuracy)
 			*/
 		// accuracy (in %)
-		// description (string to be parsed with a special function)
-			// first char is spell type: {d,h,n,w,c,g,m,e}
-			// TODO: make use of ascii values to encode data in the string
-			// https://www.asciitable.com
+		// description
 	//! enemies
 	//! items
 		// clothing
