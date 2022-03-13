@@ -13,6 +13,12 @@ int main()
 	player.SetAppearance(*L"\u0040");
 	current_level.SpawnEntity(&player);
 
+	// Code only for testing
+	player.EquipItem(&items[7001]);
+	player.UnlockSpell(1);
+	player.UnlockSpell(2);
+	//
+
 	Gameloop();
 }
 // ! - not fully implemented

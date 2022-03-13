@@ -13,6 +13,7 @@ struct Deck {
 	int max_copies = 0;
 	int max_tc_count = 0;
 	std::vector<int> spells;
+	std::vector<int> treasure_cards;
 
 	void AddSpell(int id);
 	void RemoveSpell(int id);
@@ -60,8 +61,8 @@ public:
 	int GetHealingOut() const;
 	Deck GetDeck() const;
 	std::vector<int> GetItemCards() const;
-	std::vector<int> GetEquippedTreasureCards() const;
 	std::vector<int> GetTreasureCards() const;
+	std::vector<int> GetEquippedTreasureCards() const;
 
 	Player(Player&) = delete;
 	void operator=(const Player&) = delete;
@@ -91,7 +92,6 @@ protected:
 
 	Deck m_deck;
 	std::vector<int> m_item_cards;
-	std::vector<int> m_equipped_treasure_cards;
 	std::vector<int> m_treasure_cards;
 };
 

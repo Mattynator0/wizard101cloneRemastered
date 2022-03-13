@@ -124,21 +124,21 @@ void Player::EquipItem(Item* item_ptr) {
 	UpdateStats();
 }
 void Player::EquipTreasureCard(int id) {
-	if (m_equipped_treasure_cards.size() == m_deck.max_tc_count)
+	if (m_deck.treasure_cards.size() == m_deck.max_tc_count)
 		return;
 
 	for (int i = 0; i < m_treasure_cards.size(); i++) {
 		if (m_treasure_cards[i] == id) {
 			m_treasure_cards.erase(m_treasure_cards.begin() + i);
-			m_equipped_treasure_cards.push_back(id);
+			m_deck.treasure_cards.push_back(id);
 			break;
 		}
 	}
 }
 void Player::UnequipTreasureCard(int id) {
-	for (int i = 0; i < m_equipped_treasure_cards.size(); i++) {
-		if (m_equipped_treasure_cards[i] == id) {
-			m_equipped_treasure_cards.erase(m_equipped_treasure_cards.begin() + i);
+	for (int i = 0; i < m_deck.treasure_cards.size(); i++) {
+		if (m_deck.treasure_cards[i] == id) {
+			m_deck.treasure_cards.erase(m_deck.treasure_cards.begin() + i);
 			m_treasure_cards.push_back(id);
 			break;
 		}
@@ -199,7 +199,7 @@ void Player::UpdateStats() {
 		if (!item)
 			continue;
 		std::wstring stats = item->GetStats();
-		while (stats != L"") {
+		while (stats != L"" && stats != L";") {
 			// string structure:  stat1;stat2;...;
 			// get all the info about first stat in string
 			std::wstring current_stat = stats.substr(0, stats.find(';'));
@@ -334,5 +334,5 @@ int Player::GetHealingIn() const { return m_healing_in; }
 int Player::GetHealingOut() const { return m_healing_out; }
 Deck Player::GetDeck() const { return m_deck; }
 std::vector<int> Player::GetItemCards() const { return m_item_cards; }
-std::vector<int> Player::GetEquippedTreasureCards() const { return m_equipped_treasure_cards; }
 std::vector<int> Player::GetTreasureCards() const { return m_treasure_cards; }
+std::vector<int> Player::GetEquippedTreasureCards() const { return m_deck.treasure_cards; }

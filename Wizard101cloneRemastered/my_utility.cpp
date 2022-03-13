@@ -159,7 +159,7 @@ void SpellDeckMenu() {
 	while (loop) {
 		Deck deck = player.GetDeck();
 		auto unlocked_spells = player.GetUnlockedSpells();
-		auto eq_tc = player.GetEquippedTreasureCards();
+		auto eq_tc = deck.treasure_cards;
 		auto owned_tc = player.GetTreasureCards();
 		auto owned_ic = player.GetItemCards();
 		// Your deck:
@@ -181,8 +181,8 @@ void SpellDeckMenu() {
 				auto spell = spells(deck.spells[(deck_page - 1) * 5 + i], card_type_enum::Spell);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
 				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstring_to_location) {
-					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+				for (const auto& n : map_wstring_to_school) {
+					if (school_enum(spell.GetSchool()) == n.second) {
 						std::wcout << n.first;
 						break;
 					}
@@ -201,16 +201,17 @@ void SpellDeckMenu() {
 		if (deck_page != max_deck_page)
 			std::wcout << "   >>";
 
+
 		//  unlocked spells
-		std::wcout << "\n\nYour spells: \n";
+		std::wcout << "\n\n\nYour spells: \n";
 		for (int i = 0; i < 5; i++) {
 			if ((spells_page - 1) * 5 + i < unlocked_spells.size()) {
 				
 				auto spell = spells(unlocked_spells[(spells_page - 1) * 5 + i], card_type_enum::Spell);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
 				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstring_to_location) {
-					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+				for (const auto& n : map_wstring_to_school) {
+					if (school_enum(spell.GetSchool()) == n.second) {
 						std::wcout << n.first;
 						break;
 					}
@@ -229,16 +230,17 @@ void SpellDeckMenu() {
 		if (spells_page != max_spells_page)
 			std::wcout << "   >>";
 
+
 		// equipped treasure cards
-		std::wcout << "\n\nYour equipped treasure cards: \n";
+		std::wcout << "\n\n\nYour equipped treasure cards: \n";
 		for (int i = 0; i < 5; i++) {
 			if ((eq_tc_page - 1) * 5 + i < eq_tc.size()) {
 
 				auto spell = spells(eq_tc[(eq_tc_page - 1) * 5 + i], card_type_enum::Treasure_Card);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
 				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstring_to_location) {
-					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+				for (const auto& n : map_wstring_to_school) {
+					if (school_enum(spell.GetSchool()) == n.second) {
 						std::wcout << n.first;
 						break;
 					}
@@ -257,16 +259,17 @@ void SpellDeckMenu() {
 		if (eq_tc_page != max_eq_tc_page)
 			std::wcout << "   >>";
 
+
 		// owned treasure cards
-		std::wcout << "\n\nYour treasure cards: \n";
+		std::wcout << "\n\n\nYour treasure cards: \n";
 		for (int i = 0; i < 5; i++) {
 			if ((tc_page - 1) * 5 + i < owned_tc.size()) {
 
 				auto spell = spells(owned_tc[(tc_page - 1) * 5 + i], card_type_enum::Treasure_Card);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
 				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstring_to_location) {
-					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+				for (const auto& n : map_wstring_to_school) {
+					if (school_enum(spell.GetSchool()) == n.second) {
 						std::wcout << n.first;
 						break;
 					}
@@ -282,20 +285,20 @@ void SpellDeckMenu() {
 		if (spell_deck_menu == spell_deck_menu_enum::Treasure_Cards)
 			std::wcout << ">Page: " << tc_page << " / " << max_tc_page;
 		else std::wcout << " Page: " << tc_page << " / " << max_tc_page;
-		
 		if (tc_page != max_tc_page)
 			std::wcout << "   >>";
 
+
 		// owned item cards
-		std::wcout << "\n\nYour item cards: \n";
+		std::wcout << "\n\n\nYour item cards: \n";
 		for (int i = 0; i < 5; i++) {
 			if ((ic_page - 1) * 5 + i < owned_ic.size()) {
 
 				auto spell = spells(owned_ic[(ic_page - 1) * 5 + i], card_type_enum::Item_Card);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
 				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstring_to_location) {
-					if (school_enum(spell.GetSchool()) == school_enum(n.second)) {
+				for (const auto& n : map_wstring_to_school) {
+					if (school_enum(spell.GetSchool()) == n.second) {
 						std::wcout << n.first;
 						break;
 					}
@@ -410,6 +413,26 @@ void SpellDeckMenu() {
 			case '3':
 			case '4':
 			case '5':
+				switch (spell_deck_menu) {
+				case spell_deck_menu_enum::Deck:
+					if (choice - '1' + (deck_page - 1) * 5 < deck.spells.size())
+						deck.RemoveSpell(deck.spells[choice - '1' + (deck_page - 1) * 5]);
+					break;
+				case spell_deck_menu_enum::Unlocked_Spells:
+					if (choice - '1' + (spells_page - 1) * 5 < unlocked_spells.size())
+						deck.AddSpell(unlocked_spells[choice - '1' + (spells_page - 1) * 5]);
+					break;
+				case spell_deck_menu_enum::Equipped_Treasure_Cards:
+					if (choice - '1' + (eq_tc_page - 1) * 5 < player.GetEquippedTreasureCards().size())
+						player.UnequipTreasureCard(player.GetEquippedTreasureCards()[choice - '1' + (eq_tc_page - 1) * 5]);
+					break;
+				case spell_deck_menu_enum::Treasure_Cards:
+					if (choice - '1' + (tc_page - 1) * 5 < player.GetTreasureCards().size())
+						player.EquipTreasureCard(player.GetTreasureCards()[choice - '1' + (tc_page - 1) * 5]);
+					break;
+				case spell_deck_menu_enum::Item_Cards:
+					break;
+				}
 				break;
 		}
 	}
