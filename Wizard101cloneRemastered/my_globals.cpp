@@ -6,7 +6,6 @@ std::unordered_map<std::wstring, locations_enum> map_wstring_to_location = {
     { L"Ravenwood", locations_enum::Ravenwood },
     { L"Unicorn Way", locations_enum::Unicorn_Way }
 };
-
 std::unordered_map<std::wstring, school_enum> map_wstring_to_school = {
     { L"Fire", school_enum::Fire },
     { L"fire", school_enum::Fire },

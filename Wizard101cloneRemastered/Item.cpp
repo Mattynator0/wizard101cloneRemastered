@@ -3,7 +3,7 @@
 // ----- functions -----
 std::istream& operator>> (std::istream& in, Item& item) {
 	// input example
-	// 701 Starter deck;8 0 0;size:14;max_copies:3
+	// 7001 Starter deck;8 0 0;deck size:14,3,5;
 	int temp_int;
 	std::string temp_str;
 	in >> item.m_id; // 701
@@ -15,7 +15,7 @@ std::istream& operator>> (std::istream& in, Item& item) {
 	in >> item.m_level_req >> temp_int; // 0 0
 	item.m_school_req = school_enum(temp_int); // None
 	in.ignore(1); // skip ';' character
-	in >> temp_str; // "size:14;max_copies:3"
+	std::getline(in, temp_str); // "deck size:14,3,5;"
 	item.m_stats = widen(temp_str);
 	return in;
 }

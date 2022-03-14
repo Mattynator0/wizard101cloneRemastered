@@ -10,6 +10,7 @@ enum class orientation_enum { None = 0, Horizontal, Vertical };
 enum class school_enum { None = 0, Fire, Ice, Storm, Myth, Life, Death, Balance };
 enum class spell_type_enum { None = 0, Damage, Healing, Necromancy, Ward, Charm, Global, Manipulation, Enchantment };
 enum class card_type_enum { None = 0, Spell, Item_Card, Treasure_Card };
+enum class spell_deck_menu_enum { None = 0, Deck, Unlocked_Spells, Item_Cards, Equipped_Treasure_Cards, Treasure_Cards };
 
 extern std::unordered_map<std::wstring, locations_enum> map_wstring_to_location;
 extern std::unordered_map<std::wstring, school_enum> map_wstring_to_school;
