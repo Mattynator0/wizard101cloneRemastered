@@ -19,7 +19,7 @@ int Deck::GetSpellCount(int id) {
 	auto first = std::distance(spells.begin(), std::lower_bound(spells.begin(), spells.end(), id)); // index of the first value equal to 'id'
 	if (first == spells.size() || spells[first] != id)
 		return 0;
-	return std::distance(spells.begin(), std::upper_bound(spells.begin(), spells.end(), id)) - first + 1; // count of values equal to 'id'
+	return std::distance(spells.begin(), std::upper_bound(spells.begin(), spells.end(), id)) - first; // count of values equal to 'id'
 }
 void Deck::Clear() {
 	max_spell_count = 0;
@@ -120,7 +120,7 @@ void Player::AddItem(int id) {
 std::array<Item*, 8> Player::GetEquippedItems() const { return m_equipped_items; }
 void Player::EquipItem(Item* item_ptr) {
 	if (item_ptr->GetLevelReq() <= m_level && (item_ptr->GetSchoolReq() == m_school || item_ptr->GetSchoolReq() == school_enum::None))
-		m_equipped_items[int(item_ptr->GetType())] = item_ptr;
+		m_equipped_items[int(item_ptr->GetType()) - 1] = item_ptr;
 	UpdateStats();
 }
 void Player::EquipTreasureCard(int id) {
@@ -170,7 +170,6 @@ void Player::UpdateStats() {
 	if (m_level >= 10)
 		m_powerpip_chance = 10 + (m_level - 1) * 30 / 40;
 	else m_powerpip_chance = 0;
-
 	switch (m_school) {
 		case school_enum::Fire:
 			m_maxhp = 415 + (m_level - 1) * 1085 / 49;
@@ -194,12 +193,13 @@ void Player::UpdateStats() {
 			m_maxhp = 480 + (m_level - 1) * 1320 / 49;
 			break;
 	}
+
 	// items-based stats
 	for (const auto& item : m_equipped_items) {
 		if (!item)
 			continue;
 		std::wstring stats = item->GetStats();
-		while (stats != L"" && stats != L";") {
+		while (stats != L"") {
 			// string structure:  stat1;stat2;...;
 			// get all the info about first stat in string
 			std::wstring current_stat = stats.substr(0, stats.find(';'));
@@ -292,9 +292,9 @@ void Player::UpdateStats() {
 			} else
 			if (current_stat_type == L"deck size") {
 				m_deck.max_spell_count = std::stoi(current_stat.substr(0, current_stat.find(',')));
-				current_stat.erase(0, stats.find(',') + 1);
+				current_stat.erase(0, current_stat.find(',') + 1);
 				m_deck.max_copies = std::stoi(current_stat.substr(0, current_stat.find(',')));
-				current_stat.erase(0, stats.find(',') + 1);
+				current_stat.erase(0, current_stat.find(',') + 1);
 				m_deck.max_tc_count = std::stoi(current_stat.substr(0, current_stat.find(',')));
 
 				// find the longest sequence of the same numbers (i.e. largest number of copies of the same spell)
@@ -333,6 +333,7 @@ std::array<int, 7> Player::GetAccuracyPercentage() const { return m_accuracy_per
 int Player::GetHealingIn() const { return m_healing_in; }
 int Player::GetHealingOut() const { return m_healing_out; }
 Deck Player::GetDeck() const { return m_deck; }
+Deck& Player::GetDeckRef() { return m_deck; }
 std::vector<int> Player::GetItemCards() const { return m_item_cards; }
 std::vector<int> Player::GetTreasureCards() const { return m_treasure_cards; }
 std::vector<int> Player::GetEquippedTreasureCards() const { return m_deck.treasure_cards; }

@@ -60,6 +60,7 @@ public:
 	int GetHealingIn() const;
 	int GetHealingOut() const;
 	Deck GetDeck() const;
+	Deck& GetDeckRef();
 	std::vector<int> GetItemCards() const;
 	std::vector<int> GetTreasureCards() const;
 	std::vector<int> GetEquippedTreasureCards() const;

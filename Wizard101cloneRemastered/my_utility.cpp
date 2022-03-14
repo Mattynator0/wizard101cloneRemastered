@@ -157,9 +157,9 @@ void SpellDeckMenu() {
 	bool loop = true;
 	auto spell_deck_menu = spell_deck_menu_enum::Deck;
 	while (loop) {
-		Deck deck = player.GetDeck();
+		auto& deck = player.GetDeckRef(); // this solution is kinda ugly, but I couldn't find a better way to get a reference to player.m_deck
 		auto unlocked_spells = player.GetUnlockedSpells();
-		auto eq_tc = deck.treasure_cards;
+		auto& eq_tc = deck.treasure_cards;
 		auto owned_tc = player.GetTreasureCards();
 		auto owned_ic = player.GetItemCards();
 		// Your deck:
@@ -194,7 +194,7 @@ void SpellDeckMenu() {
 		if (deck_page != 1)
 			std::wcout << "<<  ";
 		else std::wcout << "    ";
-		int max_deck_page = deck.spells.size() / 5 + 1;
+		int max_deck_page = deck.spells.size() > 0 ? (deck.spells.size() - 1) / 5 + 1 : 1;
 		if (spell_deck_menu == spell_deck_menu_enum::Deck)
 			std::wcout << ">Page: " << deck_page << " / " << max_deck_page;
 		else std::wcout << " Page: " << deck_page << " / " << max_deck_page;
@@ -223,7 +223,7 @@ void SpellDeckMenu() {
 		if (spells_page != 1)
 			std::wcout << "<<  ";
 		else std::wcout << "    ";
-		int max_spells_page = unlocked_spells.size() / 5 + 1;
+		int max_spells_page = unlocked_spells.size() > 0 ? (unlocked_spells.size() - 1) / 5 + 1 : 1;
 		if (spell_deck_menu == spell_deck_menu_enum::Unlocked_Spells)
 			std::wcout << ">Page: " << spells_page << " / " << max_spells_page;
 		else std::wcout << " Page: " << spells_page << " / " << max_spells_page;
@@ -252,7 +252,7 @@ void SpellDeckMenu() {
 		if (eq_tc_page != 1)
 			std::wcout << "<<  ";
 		else std::wcout << "    ";
-		int max_eq_tc_page = eq_tc.size() / 5 + 1;
+		int max_eq_tc_page = eq_tc.size() > 0 ? (eq_tc.size() - 1) / 5 + 1 : 1;
 		if (spell_deck_menu == spell_deck_menu_enum::Equipped_Treasure_Cards)
 			std::wcout << ">Page: " << eq_tc_page << " / " << max_eq_tc_page;
 		else std::wcout << " Page: " << eq_tc_page << " / " << max_eq_tc_page;
@@ -281,7 +281,7 @@ void SpellDeckMenu() {
 		if (tc_page != 1)
 			std::wcout << "<<  ";
 		else std::wcout << "    ";
-		int max_tc_page = owned_tc.size() / 5 + 1;
+		int max_tc_page = owned_tc.size() > 0 ? (owned_tc.size() - 1) / 5 + 1 : 1;
 		if (spell_deck_menu == spell_deck_menu_enum::Treasure_Cards)
 			std::wcout << ">Page: " << tc_page << " / " << max_tc_page;
 		else std::wcout << " Page: " << tc_page << " / " << max_tc_page;
@@ -310,7 +310,7 @@ void SpellDeckMenu() {
 		if (ic_page != 1)
 			std::wcout << "<<  ";
 		else std::wcout << "    ";
-		int max_ic_page = owned_ic.size() / 5 + 1;
+		int max_ic_page = owned_ic.size() > 0 ? (owned_ic.size() - 1) / 5 + 1 : 1;
 		if (spell_deck_menu == spell_deck_menu_enum::Item_Cards)
 			std::wcout << ">Page: " << ic_page << " / " << max_ic_page;
 		else std::wcout << " Page: " << ic_page << " / " << max_ic_page;
