@@ -4,8 +4,6 @@
 #include <iostream>
 #include <vector>
 
-const int n_enemies = 0;
-
 struct EnemyDrops {
 	int gold_min;
 	int gold_max;

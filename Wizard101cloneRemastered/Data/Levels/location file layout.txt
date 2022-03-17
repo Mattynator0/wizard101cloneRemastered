@@ -1,11 +1,15 @@
+//stuff written like this mustn't be present in files, it's only used here as comments
 size_x;size_y
-npcs:
-	appearance;name;position
+//npcs:
+appearance;name;position
 <
-gateways:
-	orientation(H - horizontal, V - vertical);destination;spawn_position_in_destination;position
+//gateways:
+orientation(H - horizontal, V - vertical);destination;spawn_position_in_destination;position
 <
-layout: e.g. 4x3
-	....
-	....
-	....
+//enemies:
+id
+<
+//layout, e.g. 4x3:
+....
+....
+....

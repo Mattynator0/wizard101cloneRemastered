@@ -2,7 +2,8 @@
 
 int main()
 {
-	//std::wcout.sync_with_stdio(false); // to be determined if it's necessary
+	std::cout.sync_with_stdio(false); // to be determined if it's necessary
+	std::wcout.sync_with_stdio(false); // to be determined if it's necessary
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	ShowConsoleCursor(false);
 
@@ -21,13 +22,13 @@ int main()
 
 	Gameloop();
 }
-// ! - not fully implemented
+// '!' - not fully implemented
 // ----- ON LAUNCHING GAME -----
 // load all essential data
-	//! spells
+	// spells, treasure cards, item cards
 		// id
 		// name
-		// cost in pips and overall mana (cost -1 means it consumes all available pips)
+		// cost in pips and overall mana (cost -1 means it consumes all available pips, equivalent of cost X in Wizard101)
 		// school
 			/*
 			* fire - high damage over time
@@ -46,18 +47,17 @@ int main()
 			* wards (consumed after use):
 				* shields are cast on self/allies; reduce incoming damage
 				* traps are cast on opponents; increase incoming damage
-				* absorption spells act like 'armor' - they absorb damage up to the amount specified in spell description; they don't protect against health draining spells
+				* absorption spells act like 'armor' - they absorb damage up to the amount specified in spell description and break when their durability reaches 0
 			* charms (consumed after use; cast on self or single ally/opponent):
 				* blades increase outgoing damage/heal or spell accuracy
 				* debuffs decrease outgoing damage/heal or spell accuracy
 			* global - global amplifiers that affect everyone and last for the duration of the battle (unless other global is cast, i.e. there can't be more than one global active at a time)
 			* manipulation - summoning minions, reshuffling deck, giving pips to allies, prisms (convert school of incoming attack to the opposite), etc.
-			* enchantment - can be used to 'enchant' a card and convert it to a treasure card with a boosted stat (generally increased damage or accuracy)
+			* enchantment - can be used to 'enchant' a card with a boosted stat (generally increased damage or accuracy)
 			*/
 		// accuracy (in %)
 		// description
-	//! enemies
-	//! items
+	// items
 		// clothing
 			/*
 			* hats
@@ -73,14 +73,18 @@ int main()
 			* deck
 			*/
 		// reagents
+// current level
+	//! enemies
 	// NPCs
+	// gateways (teleports to other levels)
 //! create player
 	// https://wizard101.fandom.com/wiki/Level_Chart
 	// (in future) load player data
-//! choose and load level
-	// create enemies
+// choose and load level
+	//! create enemies
 	// spawn whatever should be spawned (player, NPCs, etc.)
 
+// !!! STUFF BELOW THIS COMMENT HASN'T BEEN REVISED IN A LONG TIME !!!
 // ----- ON EVERY PLAYER "ACTION" -----
 // EXPLORATION:
 	// draw 11x11 level grid around player (player is in the center)

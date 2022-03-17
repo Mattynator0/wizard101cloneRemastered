@@ -14,7 +14,7 @@ std::istream& operator>> (std::istream& in, Level& level) {
 	in >> level.m_level_size.y; // temp_char gets rid of ';' character separating data
 	in.ignore(INT_MAX, '\n'); // get rid of EOL
 
-	// load NPC data
+	// load NPCs data
 	std::wstring wstr;
 	while (true) {
 		std::getline(in, temp_str);
@@ -36,12 +36,12 @@ std::istream& operator>> (std::istream& in, Level& level) {
 	orientation_enum temp_orientation_enum = orientation_enum::None;
 	Position temp_position;
 
+	// load gateways data
 	while (true) {
 		std::getline(in, temp_str);
 		wstr = widen(temp_str);
 		if (wstr == L"<") break;
 
-		// load in gateways
 		// example of a string to parse: H;The Commons;3;5;5;0
 		switch (wstr[0]) {
 			case 'H':
@@ -68,6 +68,21 @@ std::istream& operator>> (std::istream& in, Level& level) {
 			std::stoi(wstr.substr(0, wstr.find(';'))), // 5
 			std::stoi(wstr.substr(wstr.find(';') + 1)) // 0
 			});
+	}
+
+	int enemy_id;
+	std::ifstream enemy_file;
+	enemy_file.open("Data/enemies.txt");
+
+	// load enemies data
+	while (true) {
+		std::getline(in, temp_str);
+		wstr = widen(temp_str);
+		if (wstr == L"<") break;
+
+		// example of a string to parse: 1 
+		enemy_id = std::stoi(temp_str);
+		// TODO find enemy with id 'enemy_id' in file 'enemy_file'
 	}
 
 	// read the general layout of the level (wall or not wall)

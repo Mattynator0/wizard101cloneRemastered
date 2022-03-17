@@ -8,7 +8,6 @@
 
 SpellArray spells;
 ItemArray items;
-std::array<Enemy, n_enemies> enemies;
 
 void ShowConsoleCursor(bool showFlag)
 {
@@ -46,12 +45,6 @@ void LoadData() {
 	ifile.open("Data/items.txt");
 	for (int i = 0; i < n_items; i++) {
 		ifile >> items.arr[i];
-	}
-	ifile.close();
-
-	ifile.open("Data/enemies.txt");
-	for (int i = 0; i < n_enemies; i++) {
-		ifile >> enemies[i];
 	}
 	ifile.close();
 }
@@ -120,6 +113,7 @@ void Gameloop() {
 				break;
 			case ESCAPE_KEY:
 				// open options menu
+				exit(0);
 				break;
 		}
 	}

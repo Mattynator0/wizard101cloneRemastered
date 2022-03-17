@@ -34,7 +34,6 @@ void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 
 extern SpellArray spells;
 extern ItemArray items;
-extern std::array<Enemy, n_enemies> enemies;
 
 // ----- entities in current level -----
 extern std::vector<Npc> spawned_npcs;

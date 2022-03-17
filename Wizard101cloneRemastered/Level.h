@@ -6,6 +6,7 @@
 #include "Player.h"
 
 #include <array>
+#include <fstream>
 #include <vector>
 
 extern std::vector<Npc> spawned_npcs;

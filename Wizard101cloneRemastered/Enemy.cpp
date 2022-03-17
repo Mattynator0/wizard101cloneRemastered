@@ -4,11 +4,11 @@
 std::istream& operator>> (std::istream& in, Enemy& enemy) {
 	int temp;
 	std::string temp_str;
-	in >> enemy.m_id >> temp_str;
+	char temp_char;
+	in >> enemy.m_id >> temp_char >> temp_str >> enemy.m_max_hp >> enemy.m_rank >> temp >> enemy.m_n_enemy_spells;
+	enemy.m_appearance = wchar_t(temp_char);
 	enemy.m_name = widen(temp_str);
-	in >> enemy.m_max_hp >> enemy.m_rank >> temp;
 	enemy.m_school = (school_enum)temp;
-	in >> enemy.m_n_enemy_spells;
 	for (int i = 0; i < enemy.m_n_enemy_spells; i++) {
 		in >> temp;
 		enemy.m_enemy_spells.push_back(temp);

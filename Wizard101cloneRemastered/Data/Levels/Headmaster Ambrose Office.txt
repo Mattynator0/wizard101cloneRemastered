@@ -3,6 +3,7 @@ A;Headmaster Ambrose;5;8
 <
 H;The Commons;3;5;5;0
 <
+<
 #####-#####
 #.........#
 #.........#
