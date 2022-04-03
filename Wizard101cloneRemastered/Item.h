@@ -1,11 +1,7 @@
 #pragma once
 #include "my_globals.h"
 
-#include <array>
 #include <iostream>
-
-const int n_items = 115;
-
 
 class Item
 {
@@ -14,12 +10,12 @@ public:
 	friend std::istream& operator>> (std::istream& in, Item& item);
 
 	// <-- encapsulation -->
-	int GetId();
-	std::wstring GetName();
-	item_type_enum GetType();
-	int GetLevelReq();
-	school_enum GetSchoolReq();
-	std::wstring GetStats();
+	int GetId() const;
+	std::wstring GetName() const;
+	item_type_enum GetType() const;
+	int GetLevelReq() const;
+	school_enum GetSchoolReq() const;
+	std::wstring GetStats() const;
 
 	// ----- data -----
 protected:
@@ -32,8 +28,3 @@ protected:
 };
 
 std::istream& operator>> (std::istream& in, Item& item);
-
-struct ItemArray {
-	std::array<Item, n_items> arr;
-	Item& operator[] (const int id);
-};

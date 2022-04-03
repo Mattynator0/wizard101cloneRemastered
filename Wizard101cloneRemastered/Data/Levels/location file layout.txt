@@ -1,13 +1,13 @@
-//stuff written like this mustn't be present in files, it's only used here as comments
-size_x;size_y
+//stuff written this way mustn't be present in files, it's only used here as comments
+size_x size_y
 //npcs:
-appearance;name;position
+appearance name;position
 <
 //gateways:
-orientation(H - horizontal, V - vertical);destination;spawn_position_in_destination;position
+orientation(H - horizontal, V - vertical) destination;spawn_position_in_destination gateway_position
 <
 //enemies:
-id
+id1 id2 id3
 <
 //layout, e.g. 4x3:
 ....

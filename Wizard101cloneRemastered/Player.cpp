@@ -1,20 +1,5 @@
 #include "Player.h"
 
-void Deck::AddSpell(int id) {
-	if (spells.size() < max_spell_count && GetSpellCount(id) < max_copies)
-	{
-		spells.push_back(id);
-		std::sort(spells.begin(), spells.end());
-	}
-}
-void Deck::RemoveSpell(int id) {
-	for (int i = 0; i < spells.size(); i++) {
-		if (spells[i] == id) {
-			spells.erase(spells.begin() + i);
-			break;
-		}
-	}
-}
 int Deck::GetSpellCount(int id) {
 	auto first = std::distance(spells.begin(), std::lower_bound(spells.begin(), spells.end(), id)); // index of the first value equal to 'id'
 	if (first == spells.size() || spells[first] != id)
@@ -27,19 +12,17 @@ void Deck::Clear() {
 	spells.clear();
 }
 
-Player player(L"Mattynator", school_enum::Fire);
+Player player(school_enum::Fire);
 
-Player::Player(const std::wstring& name, const school_enum school) : m_name(name), m_school(school) {
+Player::Player(const school_enum school) : m_school(school) {
 	m_equipped_items.fill(nullptr);
 	UpdateStats();
 	m_hp = m_maxhp;
 	m_mana = m_maxmana;
 }
 
-std::wstring& Player::GetName() { return m_name; }
 school_enum Player::GetSchool() const { return m_school; }
 int Player::GetLevel() const { return m_level; }
-
 int Player::GetExp() const { return m_exp; }
 struct LevelCap {
 	int level, cap;
@@ -98,14 +81,13 @@ std::array<LevelCap, 49> levelcaps{ {
 } };
 void Player::AddExp(const int n) {
 	m_exp += n;
-	while (levelcaps[m_level - 1].cap >= m_exp) {
+	while (levelcaps[m_level - 1].cap <= m_exp) {
 		if (levelcaps[m_level].training_point)
 			m_training_points++;
 		m_exp -= levelcaps[m_level - 1].cap;
 		m_level += 1;
 	}
 }
-
 std::vector<int> Player::GetUnlockedSpells() const { return m_unlocked_spells; }
 void Player::UnlockSpell(int id) {
 	m_unlocked_spells.push_back(id);
@@ -123,10 +105,27 @@ void Player::EquipItem(Item* item_ptr) {
 		m_equipped_items[int(item_ptr->GetType()) - 1] = item_ptr;
 	UpdateStats();
 }
+void Player::EquipSpell(int id) {
+	if (m_deck.spells.size() < m_deck.max_spell_count && m_deck.GetSpellCount(id) < m_deck.max_copies)
+	{
+		m_deck.spells.push_back(id);
+		std::sort(m_deck.spells.begin(), m_deck.spells.end());
+	}
+}
+void Player::UnequipSpell(int id) {
+	// this is very inefficient but this vector has <50 elements so who cares
+	for (int i = 0; i < m_deck.spells.size(); i++) {
+		if (m_deck.spells[i] == id) {
+			m_deck.spells.erase(m_deck.spells.begin() + i);
+			break;
+		}
+	}
+}
 void Player::EquipTreasureCard(int id) {
-	if (m_deck.treasure_cards.size() == m_deck.max_tc_count)
+	if (m_deck.treasure_cards.size() >= m_deck.max_tc_count)
 		return;
 
+	// this is very inefficient but this vector has <50 elements so who cares
 	for (int i = 0; i < m_treasure_cards.size(); i++) {
 		if (m_treasure_cards[i] == id) {
 			m_treasure_cards.erase(m_treasure_cards.begin() + i);
@@ -136,6 +135,7 @@ void Player::EquipTreasureCard(int id) {
 	}
 }
 void Player::UnequipTreasureCard(int id) {
+	// this is very inefficient but this vector has <50 elements so who cares
 	for (int i = 0; i < m_deck.treasure_cards.size(); i++) {
 		if (m_deck.treasure_cards[i] == id) {
 			m_deck.treasure_cards.erase(m_deck.treasure_cards.begin() + i);
@@ -203,12 +203,12 @@ void Player::UpdateStats() {
 			// string structure:  stat1;stat2;...;
 			// get all the info about first stat in string
 			std::wstring current_stat = stats.substr(0, stats.find(';'));
-			// erase it and the separator ';' from "master string"
+			// erase it and its separator ';' from "master string"
 			stats.erase(0, stats.find(';') + 1);
 
 			// get the first keyword
 			std::wstring current_stat_type = current_stat.substr(0, current_stat.find(':'));
-			// erase it and the separator ':' from current stat string
+			// erase it and its separator ':' from current_stat string
 			current_stat.erase(0, current_stat.find(':') + 1);
 
 			if (current_stat_type == L"health") {
@@ -218,12 +218,14 @@ void Player::UpdateStats() {
 				m_maxmana += std::stoi(current_stat);
 			} else
 			if (current_stat_type == L"damage") {
+				// get another keyword
 				current_stat_type = current_stat.substr(0, current_stat.find(':'));
+				// erase it and its separator ':' from current_stat string
 				current_stat.erase(0, current_stat.find(':') + 1);
 
 				// convert wstring to school_enum
 				school_enum temp_school_enum;
-				for (const auto& n : map_wstring_to_school) {
+				for (const auto& n : map_wstr_school) {
 					if (current_stat_type == n.first) {
 						temp_school_enum = n.second;
 						break;
@@ -240,12 +242,14 @@ void Player::UpdateStats() {
 				}
 			} else
 			if (current_stat_type == L"resistance") {
+				// get another keyword
 				current_stat_type = current_stat.substr(0, current_stat.find(':'));
+				// erase it and its separator ':' from current_stat string
 				current_stat.erase(0, current_stat.find(':') + 1);
 
 				// convert wstring to school_enum
 				school_enum temp_school_enum = school_enum::None;
-				for (const auto& n : map_wstring_to_school) {
+				for (const auto& n : map_wstr_school) {
 					if (current_stat_type == n.first) {
 						temp_school_enum = n.second;
 						break;
@@ -262,12 +266,14 @@ void Player::UpdateStats() {
 				}
 			} else
 			if (current_stat_type == L"accuracy") {
+				// get another keyword
 				current_stat_type = current_stat.substr(0, current_stat.find(':'));
+				// erase it and its separator ':' from current_stat string
 				current_stat.erase(0, current_stat.find(':') + 1);
 				
 				// convert wstring to school_enum
 				school_enum temp_school_enum;
-				for (const auto& n : map_wstring_to_school) {
+				for (const auto& n : map_wstr_school) {
 					if (current_stat_type == n.first) {
 						temp_school_enum = n.second;
 						break;
@@ -309,7 +315,7 @@ void Player::UpdateStats() {
 					if (count > longest_seq)
 						longest_seq = count;
 				}
-				// if the deck is large enough, copy the spells back into it
+				// if deck is large enough, copy the spells back into it
 				if (m_deck.max_spell_count >= temp_vec.size() && m_deck.max_copies >= longest_seq)
 					m_deck.spells = temp_vec;
 			}

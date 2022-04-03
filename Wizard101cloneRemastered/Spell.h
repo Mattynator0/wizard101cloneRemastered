@@ -1,11 +1,7 @@
 #pragma once
 #include "my_globals.h"
 
-#include <algorithm>
-#include <array>
 #include <iostream>
-
-constexpr int n_spells[3] = { 22, 2, 2 };
 
 class Spell
 {
@@ -37,9 +33,8 @@ protected:
 
 std::istream& operator>> (std::istream& in, Spell& spell);
 
-struct SpellArray {
-	std::array<Spell, n_spells[0]> spells;
-	std::array<Spell, n_spells[1]> item_cards;
-	std::array<Spell, n_spells[2]> treasure_cards;
-	Spell& operator() (const int id, card_type_enum card_type);
+struct SpellsData {
+	std::unordered_map<int, Spell> spell;
+	std::unordered_map<int, Spell> ic; // item cards
+	std::unordered_map<int, Spell> tc; // treasure cards
 };

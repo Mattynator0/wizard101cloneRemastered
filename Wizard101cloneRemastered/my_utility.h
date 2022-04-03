@@ -32,8 +32,8 @@ void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 	}
 }
 
-extern SpellArray spells;
-extern ItemArray items;
+extern SpellsData spells;
+extern std::unordered_map<int, Item> items;
 
 // ----- entities in current level -----
 extern std::vector<Npc> spawned_npcs;

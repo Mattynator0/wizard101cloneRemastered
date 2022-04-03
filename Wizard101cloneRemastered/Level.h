@@ -13,7 +13,6 @@ extern std::vector<Npc> spawned_npcs;
 extern std::vector<Gateway> spawned_gateways;
 extern std::vector<Enemy> spawned_enemies;
 
-// TODO consider renaming it to something more intuitive than "level layout cell"
 struct LevelLayoutCell {
 	cell_type_enum cell_type = cell_type_enum::Empty;
 	Entity* entity_ptr = nullptr;
@@ -35,7 +34,6 @@ public:
 	// <-- encapsulation -->
 	LevelLayoutCell GetCell(const Position position) const;
 	void ClearCell(const Position position);
-	void AppendLayoutCell(const LevelLayoutCell cell);
 
 	// ----- data -----
 public:

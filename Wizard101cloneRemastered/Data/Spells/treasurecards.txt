@@ -1,2 +1,1 @@
-0 index;0 0 0 0;index
 1 Fire cat;1 1 1 75;95-135 Fire damage

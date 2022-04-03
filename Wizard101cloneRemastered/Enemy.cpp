@@ -2,24 +2,27 @@
 
 // ----- functions -----
 std::istream& operator>> (std::istream& in, Enemy& enemy) {
-	int temp;
-	std::string temp_str;
-	char temp_char;
-	in >> enemy.m_id >> temp_char >> temp_str >> enemy.m_max_hp >> enemy.m_rank >> temp >> enemy.m_n_enemy_spells;
-	enemy.m_appearance = wchar_t(temp_char);
-	enemy.m_name = widen(temp_str);
-	enemy.m_school = (school_enum)temp;
+	int temp_int;
+	std::string str;
+	char ch;
+	in >> enemy.m_id >> ch;
+	std::getline(in, str, ';');
+	in >> enemy.m_max_hp >> enemy.m_rank >> temp_int >> enemy.m_n_enemy_spells;
+	enemy.m_appearance = wchar_t(ch);
+	enemy.m_name = widen(str);
+	enemy.m_school = school_enum(temp_int);
 	for (int i = 0; i < enemy.m_n_enemy_spells; i++) {
-		in >> temp;
-		enemy.m_enemy_spells.push_back(temp);
+		in >> temp_int;
+		enemy.m_enemy_spells.push_back(temp_int);
 	}
 	in >> enemy.m_drops.gold_min >> enemy.m_drops.gold_max >> enemy.m_drops.n_drops_items;
 	for (int i = 0; i < enemy.m_drops.n_drops_items; i++) {
-		in >> temp;
-		enemy.m_drops.items_id.push_back(temp);
-		in >> temp;
-		enemy.m_drops.items_drop_rate.push_back(temp);
+		in >> temp_int;
+		enemy.m_drops.items_id.push_back(temp_int);
+		in >> temp_int;
+		enemy.m_drops.items_drop_rate.push_back(temp_int);
 	}
+	// FIXME include other things in drops (currently it's only wearables)
 	return in;
 }
 

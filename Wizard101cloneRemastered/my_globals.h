@@ -9,14 +9,13 @@ enum class locations_enum { None = 0, The_Commons, Headmaster_Ambrose_Office, Ra
 enum class orientation_enum { None = 0, Horizontal, Vertical };
 enum class school_enum { None = 0, Fire, Ice, Storm, Myth, Life, Death, Balance };
 enum class spell_type_enum { None = 0, Damage, Healing, Necromancy, Ward, Charm, Global, Manipulation, Enchantment };
-enum class card_type_enum { None = 0, Spell, Item_Card, Treasure_Card };
-enum class spell_deck_menu_enum { None = 0, Deck, Unlocked_Spells, Item_Cards, Equipped_Treasure_Cards, Treasure_Cards };
+enum class spell_deck_menu_enum { None = 0, Deck, Unlocked_Spells, Equipped_Treasure_Cards, Treasure_Cards, Item_Cards};
 
-extern std::unordered_map<std::wstring, locations_enum> map_wstring_to_location;
-extern std::unordered_map<std::wstring, school_enum> map_wstring_to_school;
+extern std::unordered_map<std::wstring, locations_enum> map_wstr_location;
+extern std::unordered_map<std::wstring, school_enum> map_wstr_school;
 
 // convert a wide Unicode string to a UTF8 string
 std::string narrow(const std::wstring& wstr);
 
-// convert a UTF8 string to a wide Unicode String
+// convert a UTF8 string to a wide Unicode string
 std::wstring widen(const std::string& str);

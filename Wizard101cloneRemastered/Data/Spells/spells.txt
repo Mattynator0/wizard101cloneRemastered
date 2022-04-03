@@ -1,4 +1,3 @@
-0 index;0 0 0 0;index
 1 Fire cat;1 1 1 75;80-120 Fire damage
 2 Fireblade;0 1 5 100;+35% damage to next Fire damage spell
 3 Fire elf;2 1 1 75;100 + 210 Fire damage over 3 rounds

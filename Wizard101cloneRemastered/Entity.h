@@ -4,6 +4,12 @@
 #include <iostream>
 
 struct Position {
+	Position();
+	Position(int x, int y);
+
+	int to_index(Position size) const;
+	Position operator+(Position other);
+	
 	int x, y;
 };
 std::istream& operator>> (std::istream& in, Position& position);

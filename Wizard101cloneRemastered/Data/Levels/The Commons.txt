@@ -1,6 +1,6 @@
-7;7
+7 7
 <
-H;Headmaster Ambrose Office;5;1;3;6
+H Headmaster Ambrose Office;5 1 3 6
 <
 <
 #######

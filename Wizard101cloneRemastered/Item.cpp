@@ -21,14 +21,9 @@ std::istream& operator>> (std::istream& in, Item& item) {
 }
 
 // <-- encapsulation -->
-int Item::GetId() { return m_id; }
-std::wstring Item::GetName() { return m_name; }
-item_type_enum Item::GetType() { return m_type; }
-int Item::GetLevelReq() { return m_level_req; }
-school_enum Item::GetSchoolReq() { return m_school_req; }
-std::wstring Item::GetStats() { return m_stats; }
-
-Item& ItemArray::operator[] (const int id) {
-	// TODO use a more efficient algorithm like std::binary_search
-	return *std::find_if(arr.begin(), arr.end(), [&](Item& item) { return item.GetId() == id; });
-}
+int Item::GetId() const { return m_id; }
+std::wstring Item::GetName() const { return m_name; }
+item_type_enum Item::GetType() const { return m_type; }
+int Item::GetLevelReq() const { return m_level_req; }
+school_enum Item::GetSchoolReq() const { return m_school_req; }
+std::wstring Item::GetStats() const { return m_stats; }

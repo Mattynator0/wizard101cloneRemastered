@@ -9,26 +9,25 @@
 
 struct LevelCap;
 struct Deck {
+	// ----- functions -----
+	int GetSpellCount(int id);
+	void Clear();
+
+	// ----- data -----
 	int max_spell_count = 0;
 	int max_copies = 0;
 	int max_tc_count = 0;
 	std::vector<int> spells;
 	std::vector<int> treasure_cards;
-
-	void AddSpell(int id);
-	void RemoveSpell(int id);
-	int GetSpellCount(int id);
-	void Clear();
 };
 
 class Player : public Entity
 {
-// ----- functions -----
+	// ----- functions -----
 public:
-	Player(const std::wstring& name, const school_enum school);
+	Player(const school_enum school);
 
 	// <-- encapsulation -->
-	std::wstring& GetName();
 	school_enum GetSchool() const;
 	int GetLevel() const;
 	int GetExp() const;
@@ -39,6 +38,8 @@ public:
 	void AddItem(int id);
 	std::array<Item*, 8> GetEquippedItems() const;
 	void EquipItem(Item* item_ptr);
+	void EquipSpell(int id);
+	void UnequipSpell(int id);
 	void EquipTreasureCard(int id);
 	void UnequipTreasureCard(int id);
 	void ClearStats();
@@ -68,9 +69,8 @@ public:
 	Player(Player&) = delete;
 	void operator=(const Player&) = delete;
 
-// ----- data -----
+	// ----- data -----
 protected:
-	std::wstring m_name;
 	school_enum m_school;
 	int m_level = 1, m_exp = 0;
 

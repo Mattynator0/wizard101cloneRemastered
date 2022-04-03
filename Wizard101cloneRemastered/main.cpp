@@ -15,10 +15,11 @@ int main()
 	current_level.SpawnEntity(&player);
 
 	// Code only for testing
+#if 1
 	player.EquipItem(&items[7001]);
 	player.UnlockSpell(1);
 	player.UnlockSpell(2);
-	//
+#endif
 
 	Gameloop();
 }
