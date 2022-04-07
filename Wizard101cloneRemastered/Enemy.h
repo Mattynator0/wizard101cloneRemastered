@@ -17,23 +17,24 @@ class Enemy :
 {
 	// ----- functions -----
 public:
-	// !!!!! FIXME read enemy appearance from file
 	friend std::istream& operator>> (std::istream& in, Enemy& enemy);
 
 	// <-- encapsulation -->
-	int GetId();
-	std::wstring GetName();
-	int GetMax_hp();
-	int GetRank();
-	school_enum GetSchool();
-	int GetN_enemy_spells();
-	std::vector<int> GetEnemy_spells();
-	EnemyDrops GetDrops();
+	int GetId() const;
+	std::wstring GetName() const;
+	int GetHp() const;
+	int GetMax_hp() const;
+	int GetRank() const;
+	school_enum GetSchool() const;
+	int GetN_enemy_spells() const;
+	std::vector<int> GetEnemy_spells() const;
+	EnemyDrops GetDrops() const;
 
 	// ----- data -----
 protected:
 	int m_id;
 	std::wstring m_name;
+	int m_hp;
 	int m_max_hp;
 	int m_rank;
 	school_enum m_school;

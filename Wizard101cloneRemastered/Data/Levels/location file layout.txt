@@ -7,7 +7,7 @@ appearance name;position
 orientation(H - horizontal, V - vertical) destination;spawn_position_in_destination gateway_position
 <
 //enemies:
-id1 id2 id3
+id1 posx posy id2 posx posy
 <
 //layout, e.g. 4x3:
 ....

@@ -65,13 +65,12 @@ std::istream& operator>> (std::istream& in, Level& level) {
 	}
 	std::getline(in, str); // skip to next line
 
-	int enemy_id;
+	int enemy_id = -1;
 	Enemy temp_enemy;
 	std::ifstream enemy_file;
 	enemy_file.open("Data/enemies.txt");
 
 	// load enemies data
-	// FIXME enemies currently have no spawn area
 	while (in.peek() != '<' && in.peek() != '\n') {
 		in >> enemy_id;
 		int i = 1;
@@ -82,9 +81,15 @@ std::istream& operator>> (std::istream& in, Level& level) {
 		}
 
 		enemy_file >> temp_enemy;
+		Position temp_pos;
+		in >> temp_pos;
+		temp_enemy.SetPosition(temp_pos);
 		i++;
 		spawned_enemies.push_back(temp_enemy);
 	}
+	enemy_file.close();
+	if (enemy_id != -1)
+		in.ignore(1); // ignore EOL character
 	std::getline(in, str); // skip to next line
 
 	// read the general layout of the level (wall or not wall; NPCs, gateways etc. placed in the level layout in file is for human readability)

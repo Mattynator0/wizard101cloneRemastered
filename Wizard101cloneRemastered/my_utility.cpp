@@ -57,7 +57,7 @@ void LoadData() {
 void LoadLevel(const locations_enum& location) {
 	std::ifstream in;
 
-	// convert enum to string
+	// convert enum to wstring
 	std::wstring wstr;
 	for (const auto& n : map_wstr_location) {
 		if (location == n.second) {

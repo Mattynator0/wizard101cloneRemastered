@@ -5,11 +5,11 @@ std::istream& operator>> (std::istream& in, Enemy& enemy) {
 	int temp_int;
 	std::string str;
 	char ch;
-	in >> enemy.m_id >> ch;
+	in >> enemy.m_id >> ch; // get id, skip ' ' character, get appearance character
 	std::getline(in, str, ';');
+	enemy.m_name = widen(str);
 	in >> enemy.m_max_hp >> enemy.m_rank >> temp_int >> enemy.m_n_enemy_spells;
 	enemy.m_appearance = wchar_t(ch);
-	enemy.m_name = widen(str);
 	enemy.m_school = school_enum(temp_int);
 	for (int i = 0; i < enemy.m_n_enemy_spells; i++) {
 		in >> temp_int;
@@ -27,11 +27,12 @@ std::istream& operator>> (std::istream& in, Enemy& enemy) {
 }
 
 // <-- encapsulation -->
-int Enemy::GetId() { return m_id; }
-std::wstring Enemy::GetName() { return m_name; }
-int Enemy::GetMax_hp() { return m_max_hp; }
-int Enemy::GetRank() { return m_rank; }
-school_enum Enemy::GetSchool() { return m_school; }
-int Enemy::GetN_enemy_spells() { return m_n_enemy_spells; }
-std::vector<int> Enemy::GetEnemy_spells() { return m_enemy_spells; }
-EnemyDrops Enemy::GetDrops() { return m_drops; }
+int Enemy::GetId() const { return m_id; }
+std::wstring Enemy::GetName() const { return m_name; }
+int Enemy::GetHp() const { return m_hp; }
+int Enemy::GetMax_hp() const { return m_max_hp; }
+int Enemy::GetRank() const { return m_rank; }
+school_enum Enemy::GetSchool() const { return m_school; }
+int Enemy::GetN_enemy_spells() const { return m_n_enemy_spells; }
+std::vector<int> Enemy::GetEnemy_spells() const { return m_enemy_spells; }
+EnemyDrops Enemy::GetDrops() const { return m_drops; }

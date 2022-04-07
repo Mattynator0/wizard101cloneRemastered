@@ -23,11 +23,11 @@ public:
 	Position GetPosition() const;
 	void SetPosition(Position position);
 	virtual wchar_t GetAppearance() const;
-	void SetAppearance(wchar_t appearance);
+	void SetAppearance(char app);
 	
 	// ----- data -----
 protected:
-	Position m_pos;
-	wchar_t m_appearance;
+	Position m_pos = { -1, -1 };
+	wchar_t m_appearance = ' ';
 };
 
