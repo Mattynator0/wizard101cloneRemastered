@@ -30,6 +30,7 @@ std::istream& operator>> (std::istream& in, Enemy& enemy) {
 int Enemy::GetId() const { return m_id; }
 std::wstring Enemy::GetName() const { return m_name; }
 int Enemy::GetHp() const { return m_hp; }
+void Enemy::ResetHp() { m_hp = m_max_hp; }
 int Enemy::GetMax_hp() const { return m_max_hp; }
 int Enemy::GetRank() const { return m_rank; }
 school_enum Enemy::GetSchool() const { return m_school; }

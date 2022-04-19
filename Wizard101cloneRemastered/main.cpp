@@ -16,9 +16,11 @@ int main()
 
 	// Code only for testing
 #if 1
-	player.EquipItem(&items[7001]);
+	player.EquipItem(&items.at(7001));
+	player.EquipItem(&items.at(3001));
 	player.UnlockSpell(1);
 	player.UnlockSpell(2);
+	player.ResetHp();
 #endif
 
 	Gameloop();

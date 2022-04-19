@@ -29,3 +29,15 @@ school_enum Spell::GetSchool() const { return m_school; }
 spell_type_enum Spell::GetType() const { return m_type; }
 int Spell::GetAccuracy() const { return m_accuracy; }
 std::wstring Spell::GetDescripition() const { return m_descripition; }
+
+std::wostream& operator<< (std::wostream& out, Spell& spell) {
+	out << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
+	for (const auto& n : map_wstr_school) {
+		if (school_enum(spell.GetSchool()) == n.second) {
+			out << n.first;
+			break;
+		}
+	}
+	out << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition();
+	return out;
+}

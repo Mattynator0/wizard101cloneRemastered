@@ -5,7 +5,6 @@
 #include "Npc.h"
 #include "Player.h"
 
-#include <array>
 #include <fstream>
 #include <vector>
 

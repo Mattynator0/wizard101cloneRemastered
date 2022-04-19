@@ -37,4 +37,6 @@ struct SpellsData {
 	std::unordered_map<int, Spell> spell;
 	std::unordered_map<int, Spell> ic; // item cards
 	std::unordered_map<int, Spell> tc; // treasure cards
+
 };
+std::wostream& operator<< (std::wostream& out, Spell& spell);

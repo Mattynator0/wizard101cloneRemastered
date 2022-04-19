@@ -324,6 +324,7 @@ void Player::UpdateStats() {
 }
 
 int Player::GetHp() const { return m_hp; }
+void Player::ResetHp() { m_hp = m_maxhp; }
 int Player::GetMaxhp() const { return m_maxhp; }
 int Player::GetMana() const { return m_mana; }
 int Player::GetMaxmana() const { return m_maxmana; }

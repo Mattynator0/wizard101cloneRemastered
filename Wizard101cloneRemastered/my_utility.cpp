@@ -138,6 +138,7 @@ void MovePlayer(int x, int y) {
 			enemy_ptr = static_cast<Enemy*>(current_level.GetCell(previous_pos + Position(x, y)).entity_ptr);
 			// if player won, erase enemy
 			// else teleport player to default spawn in current world
+			BeginBattle(enemy_ptr);
 			break;
 		case cell_type_enum::Gateway:
 			// teleport to gateway's destination
@@ -151,6 +152,63 @@ void MovePlayer(int x, int y) {
 			// talk to npc
 			npc_ptr = static_cast<Npc*>(current_level.GetCell(previous_pos + Position(x, y)).entity_ptr);
 			break;
+	}
+}
+void BeginBattle(Enemy* enemy_ptr) {
+	struct BattleSpell {
+		int id;
+		card_type_enum type;
+	};
+	enemy_ptr->ResetHp();
+	std::vector<int> pile[3]; // spells, tc, ic
+	pile[0] = player.GetDeck().spells;
+	pile[1] = player.GetEquippedTreasureCards();
+	pile[2] = player.GetItemCards();
+	std::vector<BattleSpell> hand;
+	Spell spell;
+
+	bool coinflip = RNG<int>(0, 1); // 1 - player goes first, 0 - enemy goes first
+	while (enemy_ptr->GetHp() > 0 && player.GetHp() > 0) {
+		system("CLS");
+		// draw cards until hand is full (7) or there are no more cards to draw
+		while (hand.size() < 7 && pile[0].size() + pile[2].size() > 0) {
+			int n = RNG<int>(0, pile[0].size() + pile[2].size() - 1);
+			if (n < pile[0].size()) {
+				hand.push_back({ pile[0][n], card_type_enum::Spell });
+				pile[0].erase(pile[0].begin() + n);
+			}
+			else {
+				n -= pile[0].size();
+				hand.push_back({ pile[2][n], card_type_enum::Item_Card });
+				pile[2].erase(pile[2].begin() + n);
+			}
+		}
+
+		// display cards in hand
+		for (int i = 0; i < hand.size(); i++) {
+			switch (hand[i].type) {
+				case card_type_enum::Spell:
+					spell = spells.spell.at(hand[i].id);
+					std::wcout << "S "; // Spell
+					break;
+				case card_type_enum::Treasure_Card:
+					spell = spells.tc.at(hand[i].id);
+					std::wcout << "T "; // Treasure card
+					break;
+				case card_type_enum::Item_Card:
+					spell = spells.ic.at(hand[i].id);
+					std::wcout << "I "; // Item card
+					break;
+			}
+			std::wcout << spell << std::endl;
+		}
+
+		if (coinflip) {
+			
+		}
+		else {
+
+		}
 	}
 }
 void SpellDeckMenu() {
@@ -187,16 +245,9 @@ void SpellDeckMenu() {
 		std::wcout << "Your deck: \n";
 		for (int i = 0; i < 5; i++) {
 			if ((page[0] - 1) * 5 + i < deck.spells.size()) {
-				auto spell = spells.spell[deck.spells[(page[0] - 1) * 5 + i]];
+				auto spell = spells.spell.at(deck.spells[(page[0] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstr_school) {
-					if (school_enum(spell.GetSchool()) == n.second) {
-						std::wcout << n.first;
-						break;
-					}
-				}
-				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+				std::wcout << spell << std::endl;
 			}
 		}
 		// <<   Page: 2/3   >>
@@ -215,16 +266,9 @@ void SpellDeckMenu() {
 		for (int i = 0; i < 5; i++) {
 			if ((page[1] - 1) * 5 + i < unlocked_spells.size()) {
 				
-				auto spell = spells.spell[unlocked_spells[(page[1] - 1) * 5 + i]];
+				auto spell = spells.spell.at(unlocked_spells[(page[1] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstr_school) {
-					if (school_enum(spell.GetSchool()) == n.second) {
-						std::wcout << n.first;
-						break;
-					}
-				}
-				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+				std::wcout << spell << std::endl;
 			}
 		}
 		// <<   Page: 2/3   >>
@@ -243,16 +287,9 @@ void SpellDeckMenu() {
 		for (int i = 0; i < 5; i++) {
 			if ((page[2] - 1) * 5 + i < eq_tc.size()) {
 
-				auto spell = spells.tc[eq_tc[(page[2] - 1) * 5 + i]];
+				auto spell = spells.tc.at(eq_tc[(page[2] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstr_school) {
-					if (school_enum(spell.GetSchool()) == n.second) {
-						std::wcout << n.first;
-						break;
-					}
-				}
-				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+				std::wcout << spell << std::endl;
 			}
 		}
 		// <<   Page: 2/3   >>
@@ -271,16 +308,9 @@ void SpellDeckMenu() {
 		for (int i = 0; i < 5; i++) {
 			if ((page[3] - 1) * 5 + i < owned_tc.size()) {
 
-				auto spell = spells.tc[owned_tc[(page[3] - 1) * 5 + i]];
+				auto spell = spells.tc.at(owned_tc[(page[3] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstr_school) {
-					if (school_enum(spell.GetSchool()) == n.second) {
-						std::wcout << n.first;
-						break;
-					}
-				}
-				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+				std::wcout << spell << std::endl;
 			}
 		}
 		// <<   Page: 2/3   >>
@@ -299,16 +329,9 @@ void SpellDeckMenu() {
 		for (int i = 0; i < 5; i++) {
 			if ((page[4] - 1) * 5 + i < owned_ic.size()) {
 
-				auto spell = spells.ic[owned_ic[(page[4] - 1) * 5 + i]];
+				auto spell = spells.ic.at(owned_ic[(page[4] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell.GetName() << "    Cost: " << spell.GetCost() << "    School: ";
-				for (const auto& n : map_wstr_school) {
-					if (school_enum(spell.GetSchool()) == n.second) {
-						std::wcout << n.first;
-						break;
-					}
-				}
-				std::wcout << "    Accuracy: " << spell.GetAccuracy() << "    " << spell.GetDescripition() << std::endl;
+				std::wcout << spell << std::endl;
 			}
 		}
 		// <<   Page: 2/3   >>

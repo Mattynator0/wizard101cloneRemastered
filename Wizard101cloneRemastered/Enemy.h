@@ -23,6 +23,7 @@ public:
 	int GetId() const;
 	std::wstring GetName() const;
 	int GetHp() const;
+	void ResetHp();
 	int GetMax_hp() const;
 	int GetRank() const;
 	school_enum GetSchool() const;

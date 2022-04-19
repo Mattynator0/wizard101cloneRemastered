@@ -46,6 +46,7 @@ public:
 	void UpdateStats();
 
 	int GetHp() const;
+	void ResetHp();
 	int GetMaxhp() const;
 	int GetMana() const;
 	int GetMaxmana() const;
