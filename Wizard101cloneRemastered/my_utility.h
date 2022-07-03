@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+// might be useful at some point?
+#if 0
 template<typename _T>
 void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 	while (true) {
@@ -31,14 +33,7 @@ void GetInput(_T& input, _T* valid_inputs, int n_valid_inputs) {
 		}
 	}
 }
-template<typename _T>
-_T RNG(_T lower, _T upper) {
-	std::random_device rand_dev; // obtain a random number from hardware
-	std::mt19937 generator(rand_dev()); // seed the generator
-	std::uniform_int_distribution<_T> distr(lower, upper); // define the range
-	return distr(generator);
-}
-
+#endif
 extern SpellsData spells;
 extern std::unordered_map<int, Item> items;
 
@@ -56,5 +51,7 @@ void LoadLevel(const locations_enum& location);
 // ----- game functionality -----
 void Gameloop();
 void MovePlayer(int x, int y);
+void SpellOnPlayer(const Spell& spell);
+void SpellOnEnemy(const Spell& spell, Enemy* enemy_ptr);
 void BeginBattle(Enemy* enemy_ptr);
 void SpellDeckMenu();

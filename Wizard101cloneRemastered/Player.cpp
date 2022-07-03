@@ -88,6 +88,12 @@ void Player::AddExp(const int n) {
 		m_level += 1;
 	}
 }
+void Player::GainPip() {
+	if (RNG<int>(1, 100) <= m_powerpip_chance) {
+		m_power_pips++;
+	}
+	else m_pips++;
+}
 std::vector<int> Player::GetUnlockedSpells() const { return m_unlocked_spells; }
 void Player::UnlockSpell(int id) {
 	m_unlocked_spells.push_back(id);
@@ -121,6 +127,40 @@ void Player::UnequipSpell(int id) {
 		}
 	}
 }
+bool Player::IsSpellAffordable(Spell& spell) {
+	int pips = m_pips + m_power_pips;
+	// if the spell is of matching school, power pips have double the value
+	if (spell.GetSchool() == m_school) {
+		pips += m_power_pips;
+	}
+	return pips >= spell.GetCost();
+}
+void Player::SpendPips(Spell& spell) {
+	int cost = spell.GetCost();
+	if (spell.GetSchool() == m_school) {
+		// prioritize power pips
+		while (cost > 1 && m_power_pips > 0) {
+			m_power_pips--;
+			cost -= 2;
+		}
+		while (cost > 0 && m_pips > 0) {
+			m_pips--;
+			cost--;
+		}
+	}
+	else {
+		// prioritize regular pips
+		while (cost > 0 && m_pips > 0) {
+			m_pips--;
+			cost--;
+		}
+		while (cost > 0 && m_power_pips > 0) {
+			m_power_pips--;
+			cost--;
+		}
+	}
+}
+void Player::ResetPips() { m_pips = 0; m_power_pips = 0; }
 void Player::EquipTreasureCard(int id) {
 	if (m_deck.treasure_cards.size() >= m_deck.max_tc_count)
 		return;
@@ -149,21 +189,26 @@ void Player::ClearStats() {
 	m_maxhp = 0;
 	m_mana = 0;
 	m_maxmana = 0;
+	m_pips = 0;
+	m_power_pips = 0;
 	m_powerpip_chance = 0;
 	m_damage_raw.fill(0);
 	m_damage_percentage.fill(0);
 	m_resistance_raw.fill(0);
 	m_resistance_percentage.fill(0);
-	m_accuracy_raw.fill(0);
-	m_accuracy_percentage.fill(0);
+	m_accuracy.fill(0);
 	m_healing_in = 0;
 	m_healing_out = 0;
 	m_item_cards.clear();
 	m_deck.Clear();
 }
 void Player::UpdateStats() {
-	std::vector<int> temp_vec = m_deck.spells;
+	// store some info before clearing stats
+	const std::vector<int> saved_deck = m_deck.spells;
+	const int saved_hp = m_hp;
+	const int saved_mana = m_mana;
 	ClearStats();
+	
 	// level-based stats
 	// equations are based on data from https://wizard101.fandom.com/wiki/Level_Chart
 	m_maxmana = 15 + (m_level - 1) * 120 / 49;
@@ -193,6 +238,9 @@ void Player::UpdateStats() {
 			m_maxhp = 480 + (m_level - 1) * 1320 / 49;
 			break;
 	}
+
+	m_hp = min(saved_hp, m_maxhp);
+	m_mana = min(saved_mana, m_maxmana);
 
 	// items-based stats
 	for (const auto& item : m_equipped_items) {
@@ -280,14 +328,8 @@ void Player::UpdateStats() {
 					}
 				}
 
-				// increment the correct variable
-				if (current_stat.back() == '%') {
-					current_stat.pop_back();
-					m_accuracy_percentage[int(temp_school_enum)] += std::stoi(current_stat);
-				}
-				else {
-					m_accuracy_raw[int(temp_school_enum)] += std::stoi(current_stat);
-				}
+				current_stat.pop_back(); // get rid of '%' character
+				m_accuracy[int(temp_school_enum)] += std::stoi(current_stat);
 			} else
 			if (current_stat_type == L"item card") {
 				while (current_stat != L"") {
@@ -306,7 +348,7 @@ void Player::UpdateStats() {
 				// find the longest sequence of the same numbers (i.e. largest number of copies of the same spell)
 				int longest_seq = 0;
 				int n = -1, count = 0;
-				for (int i : temp_vec) {
+				for (int i : saved_deck) {
 					if (i != n) {
 						count = 0;
 						n = i;
@@ -316,11 +358,18 @@ void Player::UpdateStats() {
 						longest_seq = count;
 				}
 				// if deck is large enough, copy the spells back into it
-				if (m_deck.max_spell_count >= temp_vec.size() && m_deck.max_copies >= longest_seq)
-					m_deck.spells = temp_vec;
+				if (m_deck.max_spell_count >= saved_deck.size() && m_deck.max_copies >= longest_seq)
+					m_deck.spells = saved_deck;
 			}
 		}
 	}
+}
+
+void Player::ReceiveDamage(int dmg, school_enum school) {
+	dmg = (dmg - m_resistance_raw[int(school)]) * (1 - m_resistance_percentage[int(school)]);
+	// TODO make trap shields increase damage
+	m_hp -= dmg;
+	m_hp = max(0, m_hp);
 }
 
 int Player::GetHp() const { return m_hp; }
@@ -328,15 +377,16 @@ void Player::ResetHp() { m_hp = m_maxhp; }
 int Player::GetMaxhp() const { return m_maxhp; }
 int Player::GetMana() const { return m_mana; }
 int Player::GetMaxmana() const { return m_maxmana; }
+int Player::GetPips() const { return m_pips; }
+int Player::GetPowerPips() const { return m_power_pips; }
 int Player::GetPowerpipChance() const { return m_powerpip_chance; }
 int Player::GetTrainingPoints() const { return m_training_points; }
 int Player::GetGold() const { return m_gold; }
 std::array<int, 7> Player::GetDamageRaw() const { return m_damage_raw; }
 std::array<int, 7> Player::GetDamagePercentage() const { return m_damage_percentage; }
 std::array<int, 7> Player::GetResistanceRaw() const { return m_resistance_raw; }
-std::array<int, 7> Player::ResistancePercentage() const { return m_resistance_percentage; }
-std::array<int, 7> Player::GetAccuracyRaw() const { return m_accuracy_raw; }
-std::array<int, 7> Player::GetAccuracyPercentage() const { return m_accuracy_percentage; }
+std::array<int, 7> Player::GetResistancePercentage() const { return m_resistance_percentage; }
+std::array<int, 7> Player::GetAccuracy() const { return m_accuracy; }
 int Player::GetHealingIn() const { return m_healing_in; }
 int Player::GetHealingOut() const { return m_healing_out; }
 Deck Player::GetDeck() const { return m_deck; }

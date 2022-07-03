@@ -25,9 +25,11 @@ public:
 	int GetHp() const;
 	void ResetHp();
 	int GetMax_hp() const;
+	int GetPips() const;
+	void GainPip();
+	void ResetPips();
 	int GetRank() const;
 	school_enum GetSchool() const;
-	int GetN_enemy_spells() const;
 	std::vector<int> GetEnemy_spells() const;
 	EnemyDrops GetDrops() const;
 
@@ -37,9 +39,9 @@ protected:
 	std::wstring m_name;
 	int m_hp;
 	int m_max_hp;
+	int m_pips;
 	int m_rank;
 	school_enum m_school;
-	int m_n_enemy_spells;
 	std::vector<int> m_enemy_spells;
 	EnemyDrops m_drops;
 

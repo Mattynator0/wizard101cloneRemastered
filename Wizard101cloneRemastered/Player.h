@@ -10,10 +10,12 @@
 struct LevelCap;
 struct Deck {
 	// ----- functions -----
+
 	int GetSpellCount(int id);
 	void Clear();
 
 	// ----- data -----
+
 	int max_spell_count = 0;
 	int max_copies = 0;
 	int max_tc_count = 0;
@@ -28,10 +30,12 @@ public:
 	Player(const school_enum school);
 
 	// <-- encapsulation -->
+
 	school_enum GetSchool() const;
 	int GetLevel() const;
 	int GetExp() const;
 	void AddExp(const int n);
+	void GainPip();
 	std::vector<int> GetUnlockedSpells() const;
 	void UnlockSpell(int id);
 	std::vector<int> GetItemsInBackpack() const;
@@ -39,26 +43,32 @@ public:
 	std::array<Item*, 8> GetEquippedItems() const;
 	void EquipItem(Item* item_ptr);
 	void EquipSpell(int id);
+	bool IsSpellAffordable(Spell& spell);
+	void SpendPips(Spell& spell);
+	void ResetPips();
 	void UnequipSpell(int id);
 	void EquipTreasureCard(int id);
 	void UnequipTreasureCard(int id);
 	void ClearStats();
 	void UpdateStats();
 
+	void ReceiveDamage(int dmg, school_enum school);
+
 	int GetHp() const;
 	void ResetHp();
 	int GetMaxhp() const;
 	int GetMana() const;
 	int GetMaxmana() const;
+	int GetPips() const;
+	int GetPowerPips() const;
 	int GetPowerpipChance() const;
 	int GetTrainingPoints() const;
 	int GetGold() const;
 	std::array<int, 7> GetDamageRaw() const;
 	std::array<int, 7> GetDamagePercentage() const;
 	std::array<int, 7> GetResistanceRaw() const;
-	std::array<int, 7> ResistancePercentage() const;
-	std::array<int, 7> GetAccuracyRaw() const;
-	std::array<int, 7> GetAccuracyPercentage() const;
+	std::array<int, 7> GetResistancePercentage() const;
+	std::array<int, 7> GetAccuracy() const;
 	int GetHealingIn() const;
 	int GetHealingOut() const;
 	Deck GetDeck() const;
@@ -81,6 +91,7 @@ protected:
 
 	int m_hp, m_maxhp;
 	int m_mana, m_maxmana;
+	int m_pips = 0, m_power_pips = 0;
 	int m_powerpip_chance;
 	int m_training_points = 0;
 	int m_gold = 0;
@@ -88,8 +99,7 @@ protected:
 	std::array<int, 7> m_damage_percentage;
 	std::array<int, 7> m_resistance_raw;
 	std::array<int, 7> m_resistance_percentage;
-	std::array<int, 7> m_accuracy_raw;
-	std::array<int, 7> m_accuracy_percentage;
+	std::array<int, 7> m_accuracy;
 	int m_healing_in, m_healing_out;
 
 	Deck m_deck;

@@ -2,16 +2,19 @@
 
 int main()
 {
+	// some QoL commands (among other stuff)
 	std::cout.sync_with_stdio(false); // to be determined if it's necessary
 	std::wcout.sync_with_stdio(false); // to be determined if it's necessary
 	_setmode(_fileno(stdout), _O_U16TEXT);
 	ShowConsoleCursor(false);
 
+	// load in everything needed
 	LoadData();
 	LoadLevel(locations_enum::Headmaster_Ambrose_Office);
 
-	player.SetPosition({ 2, 2 });
+	// create player
 	player.SetAppearance(*L"\u0040");
+	player.SetPosition({ 2, 2 });
 	current_level.SpawnEntity(&player);
 
 	// Code only for testing
@@ -46,7 +49,6 @@ int main()
 			/*
 			* damage - deals damage to target(s) (in one hit or spread over time)
 			* healing - heals target(s) (in one 'hit' or spread over time)
-			* health drain (aka necromancy) - deals damage then returns half of it to source as healing (this healing isn't affected by global/charm/absorption spells)
 			* wards (consumed after use):
 				* shields are cast on self/allies; reduce incoming damage
 				* traps are cast on opponents; increase incoming damage
@@ -92,17 +94,17 @@ int main()
 // EXPLORATION:
 	// draw 11x11 level grid around player (player is in the center)
 	//! draw exploreUI
-	//! ask for user input
+	// ask for user input
 		/* 
-		* a - move left
-		* b - backpack
-		* c - character tab (basic info like name, stats, etc.)
-		* d - move right
-		* p - spell deck
-		* q - quests
-		* s - move down
 		* w - move up
-		* x - interact
+		* s - move down
+		* a - move left
+		* d - move right
+		*! x - interact
+		*! c - character tab (basic info like name, stats, etc.)
+		*! b - backpack
+		* p - spell deck
+		*! q - quests
 		*/
 //! BATTLE:
 	// draw battleUI

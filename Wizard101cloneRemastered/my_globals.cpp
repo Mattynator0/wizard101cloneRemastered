@@ -14,6 +14,7 @@ std::unordered_map<std::wstring, school_enum> map_wstr_school = {
     { L"Life", school_enum::Life },
     { L"Death", school_enum::Death },
     { L"Balance", school_enum::Balance },
+    { L"Any", school_enum::Any }
 };
 
 // convert a wide Unicode string to a UTF8 string

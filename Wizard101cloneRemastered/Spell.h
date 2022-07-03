@@ -14,7 +14,9 @@ public:
 	std::wstring GetName() const;
 	int GetCost() const;
 	school_enum GetSchool() const;
-	spell_type_enum GetType() const;
+	spell_type_enum GetSpellType() const;
+	void SetCardType(card_type_enum card_type);
+	card_type_enum GetCardType() const;
 	int GetAccuracy() const;
 	std::wstring GetDescripition() const;
 
@@ -25,7 +27,8 @@ protected:
 	std::wstring m_name;
 	int m_cost;
 	school_enum m_school;
-	spell_type_enum m_type;
+	spell_type_enum m_spell_type;
+	card_type_enum m_card_type;
 	int m_accuracy;
 	std::wstring m_descripition;
 	

@@ -206,11 +206,11 @@ void Level::ClearCell(const Position position) {
 			spawned_npcs.erase(spawned_npcs.begin() + std::uintptr_t(cell.entity_ptr - (Entity*)&spawned_npcs.front()) / sizeof(Npc));
 			break;
 		case cell_type_enum::Gateway:
-			//					ptr to vector		  cast to uint*				calculate index of current entity
+			//							ptr to vector		  cast to uint*				calculate index of current entity
 			spawned_gateways.erase(spawned_gateways.begin() + std::uintptr_t(cell.entity_ptr - (Entity*)&spawned_gateways.front()) / sizeof(Gateway));
 			break;
 		case cell_type_enum::Enemy:
-			//					ptr to vector		  cast to uint*				calculate index of current entity
+			//							ptr to vector		  cast to uint*				calculate index of current entity
 			spawned_enemies.erase(spawned_enemies.begin() + std::uintptr_t(cell.entity_ptr - (Entity*)&spawned_enemies.front()) / sizeof(Enemy));
 			break;
 	}

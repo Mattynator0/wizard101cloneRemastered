@@ -20,7 +20,7 @@ void ShowConsoleCursor(bool showFlag)
 	SetConsoleCursorInfo(out, &cursorInfo);
 }
 
-// ----- loading stuff in from files -----
+// ----- loading stuff in from files (spells, items, etc.) -----
 void LoadData() {
 	std::ifstream in;
 
@@ -28,6 +28,7 @@ void LoadData() {
 	in.open("Data/Spells/spells.txt");
 	while (in.peek() != EOF) {
 		in >> temp_spell;
+		temp_spell.SetCardType(card_type_enum::Spell);
 		spells.spell[temp_spell.GetId()] = temp_spell;
 	}
 	in.close();
@@ -35,6 +36,7 @@ void LoadData() {
 	in.open("Data/Spells/itemcards.txt");
 	while (in.peek() != EOF) {
 		in >> temp_spell;
+		temp_spell.SetCardType(card_type_enum::Item_Card);
 		spells.ic[temp_spell.GetId()] = temp_spell;
 	}
 	in.close();
@@ -42,6 +44,7 @@ void LoadData() {
 	in.open("Data/Spells/treasurecards.txt");
 	while (in.peek() != EOF) {
 		in >> temp_spell;
+		temp_spell.SetCardType(card_type_enum::Treasure_Card);
 		spells.tc[temp_spell.GetId()] = temp_spell;
 	}
 	in.close();
@@ -73,11 +76,10 @@ void LoadLevel(const locations_enum& location) {
 
 // ----- game functionality -----
 void Gameloop() {
-	char choice;
 	while (true) {
 		system("CLS");
 		current_level.DrawLevel();
-		choice = _getch();
+		char choice = _getch();
 		switch (choice) {
 			case 'w':
 			case ARROW_UP:
@@ -154,81 +156,248 @@ void MovePlayer(int x, int y) {
 			break;
 	}
 }
+void SpellOnPlayer(const Spell& spell) {
+	std::wstring desc = spell.GetDescripition();
+	switch (spell.GetSpellType()) {
+		case spell_type_enum::Damage:
+			// TODO make enemies' blades increase dealt damage
+			int min_dmg, max_dmg;
+			bool is_dot = false; // DoT - Damage over Time
+			bool is_necromancy = false; // necromancy converts half of dealt dmg to healing
+			int n_hits = 1; // number of hits this round
+			std::vector<school_enum> hits_school; // school type of every hit (DoT is the same type as main attack)
+
+			// e.g. "50 Myth damage and 445 Myth damage"
+			if (desc.find(L" damage and ") != std::wstring::npos) {
+				n_hits = 2;
+				min_dmg = std::stoi(desc.substr(0, desc.find(' '))); // this now means 1st hit damage
+				desc.erase(0, desc.find(' ') + 1);
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(L" and ") + 5);
+				max_dmg = std::stoi(desc.substr(0, desc.find(' '))); // this now means 2nd hit damage
+				desc.erase(0, desc.find(' ') + 1);
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(L"damage") + 6);
+
+				player.ReceiveDamage(min_dmg, hits_school[0]);
+				player.ReceiveDamage(max_dmg, hits_school[1]);
+			}
+			// e.g. "190 Fire, Ice and Storm damage"
+			else if (desc.find(L" and ") < desc.find(L" damage")) {
+				n_hits = 3;
+				min_dmg = std::stoi(desc.substr(0, desc.find(' ')));
+				desc.erase(0, desc.find(' ') + 1);
+				max_dmg = min_dmg;
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(' ') + 1);
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(' ') + 1);
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(L"damage") + 6);
+
+				player.ReceiveDamage(min_dmg, hits_school[0]);
+				player.ReceiveDamage(min_dmg, hits_school[1]);
+				player.ReceiveDamage(min_dmg, hits_school[2]);
+			}
+			// e.g. "440 Fire, 365 Ice or 550 Storm damage"
+			else if (desc.find(L" or ") < desc.find(L" damage")) {
+				int which = RNG<int>(0, 2);
+				if (which == 2) {
+					desc.erase(0, desc.find(L" or ") + 4);
+					min_dmg = std::stoi(desc.substr(0, desc.find(' ')));
+					desc.erase(0, desc.find(' ') + 1);
+					max_dmg = min_dmg;
+					hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+					desc.erase(0, desc.find(L"damage") + 6);
+				}
+				else {
+					for (int i = 0; i < 2; i++) {
+						int damage = std::stoi(desc.substr(0, desc.find(' ')));
+						desc.erase(0, desc.find(' ') + 1);
+						std::wstring school_str = desc.substr(0, desc.find(','));
+						desc.erase(0, desc.find(' ') + 1);
+
+						if (i == which) {
+							min_dmg = damage;
+							max_dmg = damage;
+							hits_school.push_back(map_wstr_school[school_str]);
+						}
+						break;
+					}
+					desc.erase(0, desc.find(L"damage") + 6);
+				}
+
+				player.ReceiveDamage(min_dmg, hits_school[0]);
+			}
+			// e.g. "160 Death damage, swap half to healing"
+			else if (desc.find(L" swap half ") != std::wstring::npos) {
+				is_necromancy = true;
+				min_dmg = std::stoi(desc.substr(0, desc.find(' ')));
+				desc.erase(0, desc.find(' ') + 1);
+				max_dmg = min_dmg;
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(L"healing") + 7);
+
+				player.ReceiveDamage(min_dmg, hits_school[0]);
+				// TODO heal enemy
+			}
+			// e.g. "80-120 Fire damage"
+			else if (desc.find('-') < desc.find(' ') && desc.find('-') < desc.find('+')) {
+				min_dmg = std::stoi(desc.substr(0, desc.find('-')));
+				desc.erase(0, desc.find('-') + 1);
+				max_dmg = std::stoi(desc.substr(0, desc.find(' ')));
+				desc.erase(0, desc.find(' ') + 1);
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(L"damage") + 6);
+
+				int damage = min_dmg + (max_dmg - min_dmg) * RNG<int>(0, 4) / 4;
+				player.ReceiveDamage(damage, hits_school[0]);
+			}
+			// e.g. "100+210 Fire damage over 3 rounds"
+			else if (desc.find('+') < desc.find(' ')) {
+				is_dot = true;
+				min_dmg = std::stoi(desc.substr(0, desc.find('+'))); // this now means damage in this round
+				desc.erase(0, desc.find('+') + 1);
+				max_dmg = std::stoi(desc.substr(0, desc.find(' '))); // this now means total damage spread over next 3 rounds
+				desc.erase(0, desc.find(' ') + 1);
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(L"rounds") + 6);
+
+				player.ReceiveDamage(min_dmg, hits_school[0]);
+				// TODO add DoT
+			}
+			// e.g. "50 Fire damage"
+			else {
+				min_dmg = std::stoi(desc.substr(0, desc.find(' ')));
+				max_dmg = min_dmg;
+				desc.erase(0, desc.find(' ') + 1);
+				hits_school.push_back(map_wstr_school[desc.substr(0, desc.find(' '))]);
+				desc.erase(0, desc.find(L"damage") + 6);
+
+				player.ReceiveDamage(min_dmg, hits_school[0]);
+			}
+
+			break;
+	}
+}
+void SpellOnEnemy(const Spell& spell, Enemy* enemy_ptr) {
+
+}
 void BeginBattle(Enemy* enemy_ptr) {
-	struct BattleSpell {
-		int id;
-		card_type_enum type;
-	};
-	enemy_ptr->ResetHp();
-	std::vector<int> pile[3]; // spells, tc, ic
+	enemy_ptr->ResetHp(); // make sure enemy has full hp
+	enemy_ptr->ResetPips();
+	player.ResetPips();
+	std::vector<Spell> hand; // 'Spell' data type is used so that data doesn't need to be fetched from 'spells' every time
+	std::vector<int> pile[2];
+	std::vector<int>& pile_tc = player.GetDeckRef().treasure_cards; // reference needed since tc's are single-use
+	
+	// spells
 	pile[0] = player.GetDeck().spells;
-	pile[1] = player.GetEquippedTreasureCards();
-	pile[2] = player.GetItemCards();
-	std::vector<BattleSpell> hand;
-	Spell spell;
+	
+	// ic
+	pile[1] = player.GetItemCards();
 
 	bool coinflip = RNG<int>(0, 1); // 1 - player goes first, 0 - enemy goes first
+	char choice;
 	while (enemy_ptr->GetHp() > 0 && player.GetHp() > 0) {
-		system("CLS");
-		// draw cards until hand is full (7) or there are no more cards to draw
-		while (hand.size() < 7 && pile[0].size() + pile[2].size() > 0) {
-			int n = RNG<int>(0, pile[0].size() + pile[2].size() - 1);
+		player.GainPip();
+		enemy_ptr->GainPip();
+		// FIXME enemy should start with some set amount of pips
+
+		// draw cards from pile until hand is full (7) or there are no more cards to draw
+		while (hand.size() < 7 && pile[0].size() + pile[1].size() > 0) {
+			int n = RNG<int>(0, pile[0].size() + pile[1].size() - 1);
 			if (n < pile[0].size()) {
-				hand.push_back({ pile[0][n], card_type_enum::Spell });
+				hand.push_back(spells.spell.at(pile[0][n]));
 				pile[0].erase(pile[0].begin() + n);
 			}
-			else {
-				n -= pile[0].size();
-				hand.push_back({ pile[2][n], card_type_enum::Item_Card });
-				pile[2].erase(pile[2].begin() + n);
-			}
+			else hand.push_back(spells.ic.at(pile[1][n - pile[0].size()]));
+			pile[1].erase(pile[1].begin() + n - pile[0].size());
 		}
+
+		system("CLS");
+		
+		// display info about enemy
+		std::wcout << enemy_ptr->GetName() << "\nHealth: " << enemy_ptr->GetHp() << "/" << enemy_ptr->GetMax_hp() 
+				   << "\nPips: " << enemy_ptr->GetPips() << "\n\n\n";
 
 		// display cards in hand
 		for (int i = 0; i < hand.size(); i++) {
-			switch (hand[i].type) {
-				case card_type_enum::Spell:
-					spell = spells.spell.at(hand[i].id);
-					std::wcout << "S "; // Spell
-					break;
-				case card_type_enum::Treasure_Card:
-					spell = spells.tc.at(hand[i].id);
-					std::wcout << "T "; // Treasure card
-					break;
-				case card_type_enum::Item_Card:
-					spell = spells.ic.at(hand[i].id);
-					std::wcout << "I "; // Item card
-					break;
-			}
-			std::wcout << spell << std::endl;
+			std::wcout << i + 1 << ". " << hand[i] << "\n";
 		}
+
+		// choose a card to play
+		// FIXME this may break if 'hand' is empty
+		// TODO add option to draw a tc
+		// TODO use the GetInput() function (it's currently commented out)
+		do {
+			choice = _getch();
+		} while (choice < '1' || choice > hand.size() + '0' || !player.IsSpellAffordable(hand[choice - '1']));
+
+		Spell& spell = hand[choice - '1'];
 
 		if (coinflip) {
-			
+			if (RNG<int>(1, 100) <= spell.GetAccuracy() + player.GetAccuracy()[int(spell.GetSchool()) - 1]) {
+				SpellOnEnemy(spell, enemy_ptr);
+				hand.erase(hand.begin() + choice - '1');
+			}
+			else {
+				// move the spell back to pile
+				if (spell.GetCardType() == card_type_enum::Item_Card)
+					pile[1].push_back(spell.GetId());
+				else pile[0].push_back(spell.GetId());
+
+				hand.erase(hand.begin() + choice - '1');
+			}
+
+			// check if enemy died
+
+			// TODO add enemies' AI
+
+			// check if player died
 		}
 		else {
+			// TODO add enemies' AI
+			
+			// check if player died
 
+			if (RNG<int>(1, 100) <= spell.GetAccuracy() + player.GetAccuracy()[int(spell.GetSchool()) - 1]) {
+				//player.UseSpell(enemy_ptr);
+				hand.erase(hand.begin() + choice - '1');
+			}
+			else {
+				if (spell.GetCardType() == card_type_enum::Treasure_Card)
+					pile[1].push_back(spell.GetId());
+				else pile[0].push_back(spell.GetId());
+
+				hand.erase(hand.begin() + choice - '1');
+			}
+
+			// check if enemy died
 		}
 	}
 }
 void SpellDeckMenu() {
 	int page[5] = { 1,1,1,1,1 }; // deck, unlocked spells, equipped tc, owned tc, ic
 	int max_page[5];
-	char choice;
-	bool loop = true;
 	auto current_menu = spell_deck_menu_enum::Deck;
+	bool loop = true;
 	while (loop) {
-		auto& deck = player.GetDeckRef();
+		auto& deck			 = player.GetDeckRef();
 		auto unlocked_spells = player.GetUnlockedSpells();
-		auto& eq_tc = deck.treasure_cards;
-		auto owned_tc = player.GetTreasureCards(); // doesn't include eq_tc
-		auto owned_ic = player.GetItemCards();
+		auto& eq_tc			 = deck.treasure_cards;
+		auto owned_tc		 = player.GetTreasureCards(); // doesn't include eq_tc; FIXME determine if a reference is needed here
+		auto owned_ic		 = player.GetItemCards();
 
-		max_page[0] = deck.spells.size() > 0 ? (deck.spells.size() - 1) / 5 + 1 : 1;
+		max_page[0] = deck.spells.size()	 > 0 ? (deck.spells.size() - 1)		/ 5 + 1 : 1;
 		max_page[1] = unlocked_spells.size() > 0 ? (unlocked_spells.size() - 1) / 5 + 1 : 1;
-		max_page[2] = eq_tc.size() > 0 ? (eq_tc.size() - 1) / 5 + 1 : 1;
-		max_page[3] = owned_tc.size() > 0 ? (owned_tc.size() - 1) / 5 + 1 : 1;
-		max_page[4] = owned_ic.size() > 0 ? (owned_ic.size() - 1) / 5 + 1 : 1;
+		max_page[2] = eq_tc.size()			 > 0 ? (eq_tc.size() - 1)			/ 5 + 1 : 1;
+		max_page[3] = owned_tc.size()		 > 0 ? (owned_tc.size() - 1)		/ 5 + 1 : 1;
+		max_page[4] = owned_ic.size()		 > 0 ? (owned_ic.size() - 1)		/ 5 + 1 : 1;
+
+		int menu_int = (int)current_menu - 1;
+		page[menu_int] = page[menu_int] > max_page[menu_int] ? max_page[menu_int] : page[menu_int];
+
 		// Your deck:
 		//	<equipped spells' stats + amount equipped / max (max is determined by equipped deck item)>
 		// Your spells:
@@ -247,18 +416,18 @@ void SpellDeckMenu() {
 			if ((page[0] - 1) * 5 + i < deck.spells.size()) {
 				auto spell = spells.spell.at(deck.spells[(page[0] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell << std::endl;
+				std::wcout << spell << "\n";
 			}
 		}
 		// <<   Page: 2/3   >>
 		if (page[0] != 1)
-			std::wcout << "<<  ";
+			 std::wcout << "<<  ";
 		else std::wcout << "    ";
 		if (current_menu == spell_deck_menu_enum::Deck)
-			std::wcout << ">Page: " << page[0] << " / " << max_page[0];
+			 std::wcout << ">Page: " << page[0] << " / " << max_page[0];
 		else std::wcout << " Page: " << page[0] << " / " << max_page[0];
 		if (page[0] != max_page[0])
-			std::wcout << "   >>";
+			 std::wcout << "   >>";
 
 
 		//  unlocked spells
@@ -268,18 +437,18 @@ void SpellDeckMenu() {
 				
 				auto spell = spells.spell.at(unlocked_spells[(page[1] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell << std::endl;
+				std::wcout << spell << "\n";
 			}
 		}
 		// <<   Page: 2/3   >>
 		if (page[1] != 1)
-			std::wcout << "<<  ";
+			 std::wcout << "<<  ";
 		else std::wcout << "    ";
 		if (current_menu == spell_deck_menu_enum::Unlocked_Spells)
-			std::wcout << ">Page: " << page[1] << " / " << max_page[1];
+			 std::wcout << ">Page: " << page[1] << " / " << max_page[1];
 		else std::wcout << " Page: " << page[1] << " / " << max_page[1];
 		if (page[1] != max_page[1])
-			std::wcout << "   >>";
+			 std::wcout << "   >>";
 
 
 		// equipped treasure cards
@@ -289,18 +458,18 @@ void SpellDeckMenu() {
 
 				auto spell = spells.tc.at(eq_tc[(page[2] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell << std::endl;
+				std::wcout << spell << "\n";
 			}
 		}
 		// <<   Page: 2/3   >>
 		if (page[2] != 1)
-			std::wcout << "<<  ";
+			 std::wcout << "<<  ";
 		else std::wcout << "    ";
 		if (current_menu == spell_deck_menu_enum::Equipped_Treasure_Cards)
-			std::wcout << ">Page: " << page[2] << " / " << max_page[2];
+			 std::wcout << ">Page: " << page[2] << " / " << max_page[2];
 		else std::wcout << " Page: " << page[2] << " / " << max_page[2];
 		if (page[2] != max_page[2])
-			std::wcout << "   >>";
+			 std::wcout << "   >>";
 
 
 		// owned treasure cards
@@ -310,18 +479,18 @@ void SpellDeckMenu() {
 
 				auto spell = spells.tc.at(owned_tc[(page[3] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell << std::endl;
+				std::wcout << spell << "\n";
 			}
 		}
 		// <<   Page: 2/3   >>
 		if (page[3] != 1)
-			std::wcout << "<<  ";
+			 std::wcout << "<<  ";
 		else std::wcout << "    ";
 		if (current_menu == spell_deck_menu_enum::Treasure_Cards)
-			std::wcout << ">Page: " << page[3] << " / " << max_page[3];
+			 std::wcout << ">Page: " << page[3] << " / " << max_page[3];
 		else std::wcout << " Page: " << page[3] << " / " << max_page[3];
 		if (page[3] != max_page[3])
-			std::wcout << "   >>";
+			 std::wcout << "   >>";
 
 
 		// owned item cards
@@ -331,20 +500,20 @@ void SpellDeckMenu() {
 
 				auto spell = spells.ic.at(owned_ic[(page[4] - 1) * 5 + i]);
 				// Fire cat    Cost: 1    School: Fire    Accuracy: 75    80-120 Fire damage
-				std::wcout << spell << std::endl;
+				std::wcout << spell << "\n";
 			}
 		}
 		// <<   Page: 2/3   >>
 		if (page[4] != 1)
-			std::wcout << "<<  ";
+			 std::wcout << "<<  ";
 		else std::wcout << "    ";
 		if (current_menu == spell_deck_menu_enum::Item_Cards)
-			std::wcout << ">Page: " << page[4] << " / " << max_page[4];
+			 std::wcout << ">Page: " << page[4] << " / " << max_page[4];
 		else std::wcout << " Page: " << page[4] << " / " << max_page[4];
 		if (page[4] != max_page[4])
-			std::wcout << "   >>";
+			 std::wcout << "   >>";
 
-		choice = _getch();
+		char choice = _getch();
 		switch (choice) {
 			case 'w':
 			case ARROW_UP:

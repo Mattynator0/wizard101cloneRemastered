@@ -2,6 +2,7 @@
 #include "my_globals.h"
 
 #include <iostream>
+#include <random>
 
 struct Position {
 	Position();
